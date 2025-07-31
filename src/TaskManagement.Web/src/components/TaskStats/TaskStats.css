@@ -1,0 +1,91 @@
+.task-stats {
+  background-color: #f9f9f9;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-top: 2rem;
+}
+
+.task-stats h2 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
+.charts-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.chart {
+  flex: 1;
+  min-width: 300px;
+}
+
+.chart h3 {
+  margin-top: 0;
+  text-align: center;
+  font-size: 1rem;
+  color: #555;
+}
+
+.progress-section {
+  margin-bottom: 2rem;
+}
+
+.progress-section h3 {
+  margin-bottom: 0.5rem;
+}
+
+.progress-bar-container {
+  height: 24px;
+  background-color: #e0e0e0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #4CAF50;
+  color: white;
+  text-align: center;
+  line-height: 24px;
+  transition: width 0.3s ease;
+}
+
+.deadlines-section h3 {
+  margin-bottom: 0.5rem;
+}
+
+.deadline-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.deadline-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem;
+  border-left: 4px solid transparent;
+  margin-bottom: 0.5rem;
+  background-color: white;
+  border-radius: 4px;
+}
+
+.deadline-list li.priority-0 {
+  border-left-color: #0097a7;
+}
+
+.deadline-list li.priority-1 {
+  border-left-color: #fbc02d;
+}
+
+.deadline-list li.priority-2 {
+  border-left-color: #c62828;
+}
+
+.due-date {
+  font-size: 0.9rem;
+  color: #555;
+}
