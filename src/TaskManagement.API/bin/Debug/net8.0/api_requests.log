@@ -4,3 +4,17 @@
 2025-07-31 13:53:36 - HTTP POST /api/Tasks requested from ::1
 2025-07-31 13:54:30 - HTTP PUT /api/Tasks/4 requested from ::1
 2025-07-31 13:54:43 - HTTP DELETE /api/Tasks/4 requested from ::1
+2025-07-31 17:21:28 - HTTP GET /api/tasks requested from ::1
+2025-07-31 17:25:24 - HTTP GET /api/tasks requested from ::1
+2025-07-31 17:25:24 - HTTP GET /api/tasks requested from ::1
+2025-07-31 17:25:24 - HTTP GET /api/tasks requested from ::1
+2025-07-31 17:25:26 - HTTP GET /api/tasks requested from ::1
+2025-07-31 17:25:26 - HTTP GET /api/tasks requested from ::1
+2025-07-31 17:29:33 - HTTP GET /api/tasks requested from ::1
+2025-07-31 17:29:33 - HTTP GET /api/tasks requested from ::1
+2025-07-31 17:29:48 - HTTP GET /api/tasks requested from ::1
+2025-07-31 17:29:48 - HTTP GET /api/tasks requested from ::1
+2025-07-31 17:31:02 - HTTP GET /api/tasks requested from ::1
+2025-07-31 17:31:02 - HTTP GET /api/tasks requested from ::1
+2025-07-31 17:31:13 - HTTP GET /api/tasks requested from ::1
+2025-07-31 17:31:13 - HTTP GET /api/tasks requested from ::1
