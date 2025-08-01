@@ -1,6 +1,7 @@
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useState } from 'react';
 import './App.css';
+import Header from './components/Header/Header';
 import TaskList from './components/TaskList/TaskList';
 import TaskForm from './components/TaskForm/TaskForm';
 import TaskDetail from './components/TaskDetail/TaskDetail';
@@ -9,13 +10,7 @@ function App() {
   return (
     <BrowserRouter>
       <div className='App'>
-        <header>
-          <h1>Task Management System</h1>
-          <nav>
-            <Link to="/">Tasks</Link>
-            <Link to="/create">Create Task</Link>
-          </nav>
-        </header>
+        <Header />
         <main>
           <Routes>
             <Route path="/" element={<TaskList />} />
