@@ -1,4 +1,4 @@
-// Enhanced TaskList.jsx with archived handling
+// Enhanced TaskList.jsx with sorting functionality
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { taskService } from '../../services/taskService';
@@ -15,8 +15,11 @@ const TaskList = () => {
     filter: 'All',
     priority: 'All',
     status: 'All',
-    showArchived: false // New filter for archived tasks
+    showArchived: false // Filter for archived tasks
   });
+  
+  // New state for sorting
+  const [sortMethod, setSortMethod] = useState('dueDate-asc'); // Default sort by due date (ascending)
   
   // Number of tasks to load at once for lazy loading
   const taskIncrement = 5;
@@ -49,8 +52,9 @@ const TaskList = () => {
     fetchTasks();
   }, []);
 
+  // Apply filters and sorting
   useEffect(() => {
-    // Apply filters
+    // Apply filters first
     let result = tasks;
     
     // Apply time-based filter
@@ -107,16 +111,37 @@ const TaskList = () => {
       result = result.filter(task => task.status !== 3);
     }
     
+    // Then apply sorting
+    const [sortBy, direction] = sortMethod.split('-');
+    const sortMultiplier = direction === 'asc' ? 1 : -1;
+    
+    // Sort the filtered results
+    result = [...result].sort((a, b) => {
+      switch (sortBy) {
+        case 'dueDate':
+          return (new Date(a.dueDate) - new Date(b.dueDate)) * sortMultiplier;
+        case 'priority':
+          return (a.priority - b.priority) * sortMultiplier;
+        case 'title':
+          return a.title.localeCompare(b.title) * sortMultiplier;
+        case 'status':
+          return (a.status - b.status) * sortMultiplier;
+        case 'created':
+          return (a.id - b.id) * sortMultiplier;
+        default:
+          return 0;
+      }
+    });
+    
     setFilteredTasks(result);
     setVisibleTasks(result.slice(0, tasksToShow));
-  }, [filters, tasks, tasksToShow]);
+  }, [filters, sortMethod, tasks, tasksToShow]);
 
   // Handle scroll for lazy loading
   const handleScroll = (e) => {
     // Load more when scrolled to within 50px of the bottom
     const scrollPosition = e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight;
     if (scrollPosition < 50 && visibleTasks.length < filteredTasks.length) {
-      console.log('Loading more tasks...'); // Debug output
       const nextBatch = Math.min(tasksToShow + taskIncrement, filteredTasks.length);
       setTasksToShow(nextBatch);
       setVisibleTasks(filteredTasks.slice(0, nextBatch));
@@ -130,6 +155,13 @@ const TaskList = () => {
       [name]: value
     }));
     // Reset tasks to show when filtering
+    setTasksToShow(taskIncrement);
+  };
+
+  // Handle sort method change
+  const handleSortChange = (e) => {
+    setSortMethod(e.target.value);
+    // Reset tasks to show when sorting
     setTasksToShow(taskIncrement);
   };
 
@@ -198,6 +230,19 @@ const TaskList = () => {
               <option value="3">Archived</option>
             )}
           </select>
+          
+          {/* New sort dropdown */}
+          <select name="sort" onChange={handleSortChange} value={sortMethod}>
+            <option value="dueDate-asc">Sort: Due Date (earliest)</option>
+            <option value="dueDate-desc">Sort: Due Date (latest)</option>
+            <option value="priority-asc">Sort: Priority (low to high)</option>
+            <option value="priority-desc">Sort: Priority (high to low)</option>
+            <option value="title-asc">Sort: Title (A-Z)</option>
+            <option value="title-desc">Sort: Title (Z-A)</option>
+            <option value="status-asc">Sort: Status (to do first)</option>
+            <option value="created-desc">Sort: Recently Created</option>
+            <option value="created-asc">Sort: Oldest Created</option>
+          </select>
         </div>
       </div>
 
@@ -218,6 +263,7 @@ const TaskList = () => {
                 <p className="task-description">{task.description}</p>
                 <div className="task-meta">
                   <span className="due-date">Due: {formatDate(task.dueDate)}</span>
+                  {task.userName && <span className="task-owner">Assigned to: {task.userName}</span>}
                 </div>
               </div>
               <div className="task-badges">
