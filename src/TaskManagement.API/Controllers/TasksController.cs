@@ -19,12 +19,12 @@ namespace TaskManagement.API.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<TasksController> _logger;
-        private readonly TaskEventService _taskEventService;
+        private readonly ITaskEventService _taskEventService;
         
         public TasksController(
             ApplicationDbContext context, 
             ILogger<TasksController> logger,
-            TaskEventService taskEventService)
+            ITaskEventService taskEventService)
         {
             _context = context;
             _logger = logger;

@@ -19,7 +19,7 @@ namespace TaskManagement.API.Events
         }
     }
 
-    public class TaskEventService
+    public class TaskEventService : ITaskEventService
     {
         private readonly ILogger<TaskEventService> _logger;
 
