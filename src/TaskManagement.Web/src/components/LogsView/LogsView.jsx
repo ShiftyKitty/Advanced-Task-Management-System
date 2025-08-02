@@ -131,11 +131,13 @@ const LogsView = () => {
       );
     }
     
-    // Apply user filter
+    // Apply user filter - modified to match both versions of a username
     if (filters.user !== 'All') {
-      result = result.filter(log => 
-        log.user === filters.user
-      );
+      result = result.filter(log => {
+        // Extract the base username without the "(login attempt)" suffix
+        const baseUsername = log.user.replace(/ \(login attempt\)$/, '');
+        return baseUsername === filters.user;
+      });
     }
     
     setFilteredLogs(result);
@@ -188,8 +190,11 @@ const LogsView = () => {
     setLogsToShow(logIncrement);
   };
 
-  // Get unique users for the user filter
-  const uniqueUsers = [...new Set(logs.map(log => log.user))];
+  // Get unique users for the user filter, removing the "(login attempt)" suffix
+  const uniqueUsers = [...new Set(logs.map(log => {
+    // Extract the base username without the "(login attempt)" suffix
+    return log.user.replace(/ \(login attempt\)$/, '');
+  }))];
 
   // Format date to readable format
   const formatDate = (timestamp) => {
