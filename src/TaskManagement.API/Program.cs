@@ -20,11 +20,13 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=taskmanagement.db"));
 
-// Register the TaskEventService
-builder.Services.AddSingleton<TaskEventService>();
+// Register the TaskEventService with its interface for better testability
+builder.Services.AddScoped<ITaskEventService, TaskEventService>();
 
 // Register the AuthService
-builder.Services.AddScoped<AuthService>();
+// builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+
 
 // Add JWT configuration
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
