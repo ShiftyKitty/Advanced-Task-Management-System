@@ -8,9 +8,9 @@ namespace TaskManagement.API.Models
         public int Id { get; set; }
         
         [Required]
-        public required string Title { get; set; } // Added 'required' modifier
+        public required string Title { get; set; }
         
-        public string? Description { get; set; } // Made nullable with ?
+        public string? Description { get; set; }
         
         [Required]
         public Priority Priority { get; set; }
@@ -19,6 +19,10 @@ namespace TaskManagement.API.Models
         
         [Required]
         public Status Status { get; set; }
+        
+        // Add User association
+        public int? UserId { get; set; }
+        public User? User { get; set; }
     }
     
     public enum Priority
