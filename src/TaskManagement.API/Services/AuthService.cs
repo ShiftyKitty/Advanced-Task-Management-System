@@ -14,7 +14,7 @@ using TaskManagement.API.Models;
 
 namespace TaskManagement.API.Services
 {
-    public class AuthService
+    public class AuthService : IAuthService
     {
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
