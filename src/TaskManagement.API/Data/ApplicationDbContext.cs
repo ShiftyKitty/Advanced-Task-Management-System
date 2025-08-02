@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TaskManagement.API.Models;
+using System;
 
 namespace TaskManagement.API.Data
 {
@@ -11,12 +12,13 @@ namespace TaskManagement.API.Data
         }
         
         public DbSet<Models.Task> Tasks { get; set; }
+        public DbSet<LogEntry> Logs { get; set; } // Add this line for the logs table
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             
-            // Seed data
+            // Seed data for Tasks
             modelBuilder.Entity<Models.Task>().HasData(
                 new Models.Task 
                 { 
