@@ -256,3 +256,80 @@
 2025-08-02 14:32:25 - HTTP GET /api/tasks requested from ::1
 2025-08-02 14:32:41 - HTTP GET /api/logs requested from ::1
 2025-08-02 14:32:41 - HTTP GET /api/logs requested from ::1
+2025-08-02 14:58:16 - HTTP POST /api/auth/login requested from ::1 by admin (login attempt)
+2025-08-02 14:58:17 - HTTP GET /api/tasks requested from ::1 by anonymous
+2025-08-02 14:58:17 - HTTP GET /api/tasks requested from ::1 by anonymous
+2025-08-02 14:58:20 - HTTP GET /api/logs requested from ::1 by anonymous
+2025-08-02 14:58:20 - HTTP GET /api/logs requested from ::1 by anonymous
+2025-08-02 15:07:46 - HTTP GET /api/tasks requested from ::1 by admin
+2025-08-02 15:07:46 - HTTP GET /api/tasks requested from ::1 by admin
+2025-08-02 15:07:48 - HTTP GET /api/logs requested from ::1 by admin
+2025-08-02 15:07:48 - HTTP GET /api/logs requested from ::1 by admin
+2025-08-02 15:08:25 - HTTP POST /api/auth/login requested from ::1 by test (login attempt)
+2025-08-02 15:08:25 - HTTP GET /api/tasks requested from ::1 by test
+2025-08-02 15:08:25 - HTTP GET /api/tasks requested from ::1 by test
+2025-08-02 15:08:30 - HTTP GET /api/tasks/10 requested from ::1 by test
+2025-08-02 15:08:30 - HTTP GET /api/tasks/10 requested from ::1 by test
+2025-08-02 15:08:35 - HTTP PUT /api/tasks/10 requested from ::1 by test
+2025-08-02 15:08:35 - HTTP GET /api/tasks requested from ::1 by test
+2025-08-02 15:08:35 - HTTP GET /api/tasks requested from ::1 by test
+2025-08-02 15:08:42 - HTTP POST /api/auth/login requested from ::1 by admin (login attempt)
+2025-08-02 15:08:42 - HTTP GET /api/tasks requested from ::1 by admin
+2025-08-02 15:08:42 - HTTP GET /api/tasks requested from ::1 by admin
+2025-08-02 15:08:44 - HTTP GET /api/logs requested from ::1 by admin
+2025-08-02 15:08:44 - HTTP GET /api/logs requested from ::1 by admin
+2025-08-02 15:15:57 - HTTP POST /api/auth/login requested from ::1 by test (login attempt)
+2025-08-02 15:15:58 - HTTP GET /api/tasks requested from ::1 by test
+2025-08-02 15:15:58 - HTTP GET /api/tasks requested from ::1 by test
+2025-08-02 15:16:32 - HTTP POST /api/tasks requested from ::1 by test
+2025-08-02 15:16:32 - HTTP GET /api/tasks requested from ::1 by test
+2025-08-02 15:16:32 - HTTP GET /api/tasks requested from ::1 by test
+2025-08-02 15:16:43 - HTTP POST /api/auth/login requested from ::1 by admin (login attempt)
+2025-08-02 15:16:43 - HTTP GET /api/tasks requested from ::1 by admin
+2025-08-02 15:16:43 - HTTP GET /api/tasks requested from ::1 by admin
+2025-08-02 15:16:48 - HTTP GET /api/logs requested from ::1 by admin
+2025-08-02 15:16:49 - HTTP GET /api/logs requested from ::1 by admin
+2025-08-02 15:17:12 - HTTP POST /api/auth/login requested from ::1 by test (login attempt)
+2025-08-02 15:17:12 - HTTP GET /api/tasks requested from ::1 by test
+2025-08-02 15:17:12 - HTTP GET /api/tasks requested from ::1 by test
+2025-08-02 15:17:16 - HTTP GET /api/tasks/12 requested from ::1 by test
+2025-08-02 15:17:16 - HTTP GET /api/tasks/12 requested from ::1 by test
+2025-08-02 15:17:25 - HTTP PUT /api/tasks/12 requested from ::1 by test
+2025-08-02 15:17:25 - HTTP GET /api/tasks requested from ::1 by test
+2025-08-02 15:17:25 - HTTP GET /api/tasks requested from ::1 by test
+2025-08-02 15:17:33 - HTTP POST /api/auth/login requested from ::1 by admin (login attempt)
+2025-08-02 15:17:33 - HTTP GET /api/tasks requested from ::1 by admin
+2025-08-02 15:17:33 - HTTP GET /api/tasks requested from ::1 by admin
+2025-08-02 15:17:39 - HTTP GET /api/logs requested from ::1 by admin
+2025-08-02 15:17:39 - HTTP GET /api/logs requested from ::1 by admin
+2025-08-02 15:24:56 - HTTP GET /api/logs requested from ::1 by admin
+2025-08-02 15:25:23 - HTTP GET /api/tasks requested from ::1 by admin
+2025-08-02 15:25:23 - HTTP GET /api/tasks requested from ::1 by admin
+2025-08-02 15:25:34 - HTTP POST /api/tasks requested from ::1 by admin
+2025-08-02 15:25:34 - HTTP GET /api/tasks requested from ::1 by admin
+2025-08-02 15:25:34 - HTTP GET /api/tasks requested from ::1 by admin
+2025-08-02 15:25:43 - HTTP GET /api/logs requested from ::1 by admin
+2025-08-02 15:25:43 - HTTP GET /api/logs requested from ::1 by admin
+2025-08-02 15:25:55 - HTTP GET /api/tasks requested from ::1 by admin
+2025-08-02 15:25:55 - HTTP GET /api/tasks requested from ::1 by admin
+2025-08-02 15:26:14 - HTTP GET /api/tasks requested from ::1 by admin
+2025-08-02 15:26:14 - HTTP GET /api/tasks requested from ::1 by admin
+2025-08-02 15:26:21 - HTTP GET /api/tasks/13 requested from ::1 by admin
+2025-08-02 15:26:21 - HTTP GET /api/tasks/13 requested from ::1 by admin
+2025-08-02 15:26:25 - HTTP GET /api/tasks requested from ::1 by admin
+2025-08-02 15:26:25 - HTTP GET /api/tasks requested from ::1 by admin
+2025-08-02 15:30:56 - HTTP GET /api/tasks requested from ::1 by admin
+2025-08-02 15:30:56 - HTTP GET /api/tasks requested from ::1 by admin
+2025-08-02 15:40:17 - HTTP GET /api/tasks requested from ::1 by admin
+2025-08-02 15:40:18 - HTTP GET /api/tasks requested from ::1 by admin
+2025-08-02 15:44:31 - HTTP GET /api/tasks requested from ::1 by admin
+2025-08-02 15:44:31 - HTTP GET /api/tasks requested from ::1 by admin
+2025-08-02 15:44:47 - HTTP GET /api/tasks requested from ::1 by admin
+2025-08-02 15:44:47 - HTTP GET /api/tasks requested from ::1 by admin
+2025-08-02 15:45:32 - HTTP GET /api/tasks requested from ::1 by admin
+2025-08-02 15:45:32 - HTTP GET /api/tasks requested from ::1 by admin
+2025-08-02 15:51:50 - HTTP GET /api/tasks requested from ::1 by admin
+2025-08-02 15:55:26 - HTTP GET /api/tasks/1 requested from ::1 by admin
+2025-08-02 15:55:26 - HTTP GET /api/tasks/1 requested from ::1 by admin
+2025-08-02 15:55:35 - HTTP GET /api/tasks requested from ::1 by admin
+2025-08-02 15:55:35 - HTTP GET /api/tasks requested from ::1 by admin
