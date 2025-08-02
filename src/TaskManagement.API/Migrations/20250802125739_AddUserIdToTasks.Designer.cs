@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TaskManagement.API.Data;
 
@@ -10,9 +11,11 @@ using TaskManagement.API.Data;
 namespace TaskManagement.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250802125739_AddUserIdToTasks")]
+    partial class AddUserIdToTasks
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.7");
@@ -149,7 +152,7 @@ namespace TaskManagement.API.Migrations
                         {
                             Id = 1,
                             Email = "admin@example.com",
-                            PasswordHash = "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
+                            PasswordHash = "AQAAAAIAAYagAAAAEOB4K5tc0hH3z/y6IxB/KfH1J0OvQjDxrlzz6bBQjQWS0k8z5m0u35AoJQNxLxDDsg==",
                             Role = "Admin",
                             Username = "admin"
                         });
