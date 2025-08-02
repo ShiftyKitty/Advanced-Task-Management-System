@@ -4,7 +4,7 @@ import './Header.css';
 
 const Header = () => {
   const location = useLocation();
-  
+
   // Check which path is active for navigation highlighting
   const isActive = (path) => {
     return location.pathname === path ? 'active' : '';
@@ -24,7 +24,6 @@ const Header = () => {
             <li className={isActive('/create')}>
               <Link to="/create">Add Task</Link>
             </li>
-            {/* Conditionally render admin links - you can add logic later */}
             <li className={isActive('/logs')}>
               <Link to="/logs">Logs/Audit Trail</Link>
             </li>
