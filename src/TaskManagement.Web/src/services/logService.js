@@ -1,6 +1,14 @@
 // services/logService.js
 const API_URL = '/api/logs';
 
+// Helper function to get the authentication header
+const getAuthHeader = () => {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  return user && user.token
+    ? { 'Authorization': `Bearer ${user.token}` }
+    : {};
+};
+
 export const logService = {
   // Get all logs with optional filtering
   getLogs: async (filters = {}) => {
@@ -14,7 +22,11 @@ export const logService = {
         url = `${API_URL}/daterange?start=${filters.startDate}&end=${filters.endDate}`;
       }
 
-      const response = await fetch(url);
+      const response = await fetch(url, {
+        headers: {
+          ...getAuthHeader()
+        }
+      });
       
       if (!response.ok) {
         throw new Error(`Failed to fetch logs: ${response.statusText}`);
@@ -30,7 +42,11 @@ export const logService = {
   // Export logs as CSV
   exportLogs: async () => {
     try {
-      const response = await fetch(`${API_URL}/export`);
+      const response = await fetch(`${API_URL}/export`, {
+        headers: {
+          ...getAuthHeader()
+        }
+      });
       
       if (!response.ok) {
         throw new Error(`Failed to export logs: ${response.statusText}`);
