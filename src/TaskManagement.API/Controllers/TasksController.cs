@@ -33,7 +33,7 @@ namespace TaskManagement.API.Controllers
         
         // GET: api/Tasks
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Models.Task>>> GetTasks()
+        public async Task<ActionResult<IEnumerable<object>>> GetTasks()
         {
             // Get current user's ID from the claims
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "id");
@@ -47,11 +47,38 @@ namespace TaskManagement.API.Controllers
                 // If user is admin, they can see all tasks
                 if (User.IsInRole("Admin"))
                 {
-                    return await _context.Tasks.ToListAsync();
+                    return await _context.Tasks
+                        .Include(t => t.User)
+                        .Select(t => new
+                        {
+                            t.Id,
+                            t.Title,
+                            t.Description,
+                            t.Priority,
+                            t.DueDate,
+                            t.Status,
+                            t.UserId,
+                            UserName = t.User != null ? t.User.Username : "Unknown"
+                        })
+                        .ToListAsync();
                 }
                 
                 // Regular users can only see their own tasks
-                return await _context.Tasks.Where(t => t.UserId == userId).ToListAsync();
+                return await _context.Tasks
+                    .Where(t => t.UserId == userId)
+                    .Include(t => t.User)
+                    .Select(t => new
+                    {
+                        t.Id,
+                        t.Title,
+                        t.Description,
+                        t.Priority,
+                        t.DueDate,
+                        t.Status,
+                        t.UserId,
+                        UserName = t.User != null ? t.User.Username : "Unknown"
+                    })
+                    .ToListAsync();
             }
             
             return BadRequest(new { message = "Invalid user ID" });
@@ -59,9 +86,11 @@ namespace TaskManagement.API.Controllers
         
         // GET: api/Tasks/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Models.Task>> GetTask(int id)
+        public async Task<ActionResult<object>> GetTask(int id)
         {
-            var task = await _context.Tasks.FindAsync(id);
+            var task = await _context.Tasks
+                .Include(t => t.User)
+                .FirstOrDefaultAsync(t => t.Id == id);
             
             if (task == null)
             {
@@ -74,7 +103,17 @@ namespace TaskManagement.API.Controllers
                 return Forbid();
             }
             
-            return task;
+            return new
+            {
+                task.Id,
+                task.Title,
+                task.Description,
+                task.Priority,
+                task.DueDate,
+                task.Status,
+                task.UserId,
+                UserName = task.User != null ? task.User.Username : "Unknown"
+            };
         }
         
         // PUT: api/Tasks/5
@@ -133,7 +172,7 @@ namespace TaskManagement.API.Controllers
         
         // POST: api/Tasks
         [HttpPost]
-        public async Task<ActionResult<Models.Task>> PostTask(Models.Task task)
+        public async Task<ActionResult<object>> PostTask(Models.Task task)
         {
             // Set the UserId to the current user's ID
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "id");
@@ -151,7 +190,28 @@ namespace TaskManagement.API.Controllers
                 _taskEventService.TriggerHighPriorityEvent(task, "created", User.Identity?.Name);
             }
             
-            return CreatedAtAction(nameof(GetTask), new { id = task.Id }, task);
+            // Get user information for the response
+            string userName = "Unknown";
+            if (task.UserId.HasValue)
+            {
+                var user = await _context.Users.FindAsync(task.UserId.Value);
+                if (user != null)
+                {
+                    userName = user.Username;
+                }
+            }
+            
+            return CreatedAtAction(nameof(GetTask), new { id = task.Id }, new 
+            {
+                task.Id,
+                task.Title,
+                task.Description,
+                task.Priority,
+                task.DueDate,
+                task.Status,
+                task.UserId,
+                UserName = userName
+            });
         }
         
         // DELETE: api/Tasks/5
