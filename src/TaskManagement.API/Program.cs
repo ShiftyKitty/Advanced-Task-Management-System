@@ -1,7 +1,12 @@
+// Program.cs
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using TaskManagement.API.Data;
 using TaskManagement.API.Events;
 using TaskManagement.API.Middleware;
+using TaskManagement.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +22,32 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // Register the TaskEventService
 builder.Services.AddSingleton<TaskEventService>();
+
+// Register the AuthService
+builder.Services.AddScoped<AuthService>();
+
+// Add JWT configuration
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+var key = Encoding.ASCII.GetBytes(jwtSettings["Secret"] ?? "TaskMaster5000_HelloThere!#2025");
+
+// Add JWT authentication
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false; // Set to true in production
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ClockSkew = TimeSpan.Zero
+    };
+});
 
 // Configure API behavior options to handle validation errors
 builder.Services.Configure<ApiBehaviorOptions>(options =>
@@ -50,7 +81,10 @@ app.UseCors();
 // Use our custom request logging middleware
 app.UseRequestLogging();
 
+// Add authentication middleware BEFORE authorization
+app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
 // Create database if it doesn't exist
