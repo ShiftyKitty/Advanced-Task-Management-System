@@ -1,4 +1,4 @@
-// Updated TaskDetail.jsx
+// Updated TaskDetail.jsx with ownership information
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { taskService } from '../../services/taskService';
@@ -68,7 +68,14 @@ const TaskDetail = ({ isEditing = false }) => {
     
     try {
       setLoading(true);
-      await taskService.updateTask(id, editedTask);
+      
+      // Make sure to preserve the original userId when updating
+      const updatedTask = {
+        ...editedTask,
+        userId: task.userId // Ensure we keep the original owner
+      };
+      
+      await taskService.updateTask(id, updatedTask);
       navigate('/');
     } catch (err) {
       setError('Failed to update task');
@@ -111,6 +118,16 @@ const TaskDetail = ({ isEditing = false }) => {
     return status === 0 ? 'TO DO' : 
            status === 1 ? 'IN PROGRESS' : 
            status === 2 ? 'COMPLETED' : 'ARCHIVED';
+  };
+
+  // Determine if a task is overdue
+  const isOverdue = (dueDate) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const taskDueDate = new Date(dueDate);
+    taskDueDate.setHours(0, 0, 0, 0);
+    
+    return taskDueDate < today && (task?.status !== 2); // Past due and not completed
   };
   
   if (loading) return <div className="loading-container">Loading task details...</div>;
@@ -195,6 +212,14 @@ const TaskDetail = ({ isEditing = false }) => {
               </div>
             </div>
             
+            {/* Display the task owner (read-only) */}
+            <div className="form-group">
+              <label>Assigned To:</label>
+              <div className="owner-display">
+                {task.userName || 'Unknown'}
+              </div>
+            </div>
+            
             <div className="form-actions">
               <button 
                 type="button" 
@@ -238,7 +263,15 @@ const TaskDetail = ({ isEditing = false }) => {
             </div>
             
             <div className="detail-meta">
-              <span className="due-date">Due Date: {formatDate(task.dueDate)}</span>
+              <span className={`due-date ${isOverdue(task.dueDate) ? 'overdue' : ''}`}>
+                Due Date: {formatDate(task.dueDate)}
+                {isOverdue(task.dueDate) && <span className="overdue-label"> (OVERDUE)</span>}
+              </span>
+              
+              {/* Display task owner */}
+              <span className="task-owner">
+                Assigned To: {task.userName || 'Unknown'}
+              </span>
             </div>
             
             <div className="detail-description">
@@ -275,7 +308,7 @@ const TaskDetail = ({ isEditing = false }) => {
         <div className="modal-overlay">
           <div className="modal">
             <h3>High Priority Confirmation</h3>
-            <p>If the user sets a task to 'high' priority, display a confirmation modal asking if they're sure.</p>
+            <p>Are you sure you want to set this task to High priority? High priority tasks will generate notifications and appear prominently in the dashboard.</p>
             <div className="modal-actions">
               <button 
                 className="btn-cancel" 

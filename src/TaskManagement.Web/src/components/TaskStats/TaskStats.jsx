@@ -1,4 +1,4 @@
-// Updated TaskStats.jsx with lazy loading for deadlines
+// Updated TaskStats.jsx with proper sorting and original labels
 import { useState, useEffect, useRef } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { Link } from 'react-router-dom';
@@ -8,14 +8,14 @@ const TaskStats = ({ tasks }) => {
   // Define colors to match wireframe
   const PRIORITY_COLORS = ['#4caf50', '#ffeb3b', '#f44336']; // Low, Medium, High
   const STATUS_COLORS = ['#90caf9', '#42a5f5', '#1e88e5', '#757575']; // To Do, In Progress, Completed, Archived
-  
+
   // State for lazy loading deadlines
   const [displayedDeadlines, setDisplayedDeadlines] = useState([]);
   const [deadlineIncrement, setDeadlineIncrement] = useState(5);
   const [hasMoreDeadlines, setHasMoreDeadlines] = useState(false);
-  
+
   const deadlinesContainerRef = useRef(null);
-  
+
   // Irish date formatting (DD/MM/YYYY)
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -25,14 +25,14 @@ const TaskStats = ({ tasks }) => {
       year: 'numeric'
     });
   };
-  
+
   // Group tasks by priority
   const tasksByPriority = [
     { name: 'Low', value: 0, tasks: [] },
     { name: 'Medium', value: 0, tasks: [] },
     { name: 'High', value: 0, tasks: [] }
   ];
-  
+
   // Group tasks by status
   const tasksByStatus = [
     { name: 'To Do', value: 0, tasks: [] },
@@ -40,47 +40,81 @@ const TaskStats = ({ tasks }) => {
     { name: 'Completed', value: 0, tasks: [] },
     { name: 'Archived', value: 0, tasks: [] }
   ];
-  
+
   // Calculate and filter upcoming deadlines
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const threeDaysFromNow = new Date(today);
   threeDaysFromNow.setDate(today.getDate() + 3);
-  
+
+  // Improved sorting logic with date categories for proper ordering
   const allUpcomingDeadlines = tasks
     .filter(task => task.status !== 2) // Not completed
-    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
-  
+    .map(task => {
+      const dueDate = new Date(task.dueDate);
+      dueDate.setHours(0, 0, 0, 0);
+
+      // Determine date category for sorting
+      let dateCategory;
+      if (dueDate.getTime() === today.getTime()) {
+        dateCategory = 0; // Today
+      } else if (dueDate <= threeDaysFromNow) {
+        dateCategory = 1; // Within 3 days
+      } else {
+        dateCategory = 2; // Further in future
+      }
+
+      return {
+        ...task,
+        dueDateObj: dueDate,
+        dateCategory
+      };
+    })
+    .sort((a, b) => {
+      // First sort by date category (today, soon, later)
+      if (a.dateCategory !== b.dateCategory) {
+        return a.dateCategory - b.dateCategory;
+      }
+
+      // Then sort by actual date within the category
+      if (a.dueDateObj.getTime() !== b.dueDateObj.getTime()) {
+        return a.dueDateObj - b.dueDateObj;
+      }
+
+      // Finally, sort by priority (highest first) if dates are the same
+      return b.priority - a.priority;
+    });
+
   // Count tasks by priority and status and store the tasks in each group
   tasks.forEach(task => {
     tasksByPriority[task.priority].value++;
     tasksByPriority[task.priority].tasks.push(task);
-    
+
     tasksByStatus[task.status].value++;
     tasksByStatus[task.status].tasks.push(task);
   });
-  
+
   // Filter out zero values for cleaner charts
   const priorityData = tasksByPriority.filter(item => item.value > 0);
   const statusData = tasksByStatus.filter(item => item.value > 0);
-  
+
   // Calculate overall progress
   const completedTasks = tasks.filter(task => task.status === 2).length;
   const progressPercentage = tasks.length > 0 ? Math.round((completedTasks / tasks.length) * 100) : 0;
-  
+
   // Initialize displayed deadlines
   useEffect(() => {
     setDisplayedDeadlines(allUpcomingDeadlines.slice(0, deadlineIncrement));
     setHasMoreDeadlines(allUpcomingDeadlines.length > deadlineIncrement);
   }, [tasks, deadlineIncrement]);
-  
+
   // Handle scroll for lazy loading deadlines
   const handleDeadlinesScroll = () => {
     if (!deadlinesContainerRef.current) return;
-    
+
     const container = deadlinesContainerRef.current;
     const scrollPosition = container.scrollHeight - container.scrollTop - container.clientHeight;
-    
+
     // Load more when scrolled to within 50px of the bottom
     if (scrollPosition < 50 && hasMoreDeadlines) {
       const nextBatch = deadlineIncrement + 5;
@@ -89,14 +123,14 @@ const TaskStats = ({ tasks }) => {
       setHasMoreDeadlines(allUpcomingDeadlines.length > nextBatch);
     }
   };
-  
+
   // Calculate percentages for legend
   const totalTasks = tasks.length;
   const priorityPercentages = tasksByPriority.map(item => ({
     ...item,
     percentage: totalTasks > 0 ? Math.round((item.value / totalTasks) * 100) : 0
   }));
-  
+
   // Custom label for pie chart center
   const renderCustomizedLabel = ({ cx, cy }) => {
     return (
@@ -110,11 +144,11 @@ const TaskStats = ({ tasks }) => {
   const getPriorityLabel = (priority) => {
     return priority === 0 ? 'LOW' : priority === 1 ? 'MEDIUM' : 'HIGH';
   };
-  
+
   return (
     <div className="task-overview">
       <h2>Task Overview</h2>
-      
+
       <div className="charts-container">
         <div className="chart">
           <h3>Task Priority Distribution</h3>
@@ -129,13 +163,13 @@ const TaskStats = ({ tasks }) => {
                 label={renderCustomizedLabel}
               >
                 {priorityData.map((entry, index) => (
-                  <Cell 
-                    key={`priority-${index}`} 
-                    fill={PRIORITY_COLORS[tasksByPriority.findIndex(item => item.name === entry.name)]} 
+                  <Cell
+                    key={`priority-${index}`}
+                    fill={PRIORITY_COLORS[tasksByPriority.findIndex(item => item.name === entry.name)]}
                   />
                 ))}
               </Pie>
-              <Tooltip 
+              <Tooltip
                 formatter={(value, name) => [`${value} Tasks`, name]}
                 contentStyle={{ borderRadius: '4px', border: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
               />
@@ -152,7 +186,7 @@ const TaskStats = ({ tasks }) => {
             ))}
           </div>
         </div>
-        
+
         <div className="chart">
           <h3>Tasks by Status</h3>
           <ResponsiveContainer width="100%" height={280}>
@@ -166,13 +200,13 @@ const TaskStats = ({ tasks }) => {
                 label={renderCustomizedLabel}
               >
                 {statusData.map((entry, index) => (
-                  <Cell 
-                    key={`status-${index}`} 
-                    fill={STATUS_COLORS[tasksByStatus.findIndex(item => item.name === entry.name)]} 
+                  <Cell
+                    key={`status-${index}`}
+                    fill={STATUS_COLORS[tasksByStatus.findIndex(item => item.name === entry.name)]}
                   />
                 ))}
               </Pie>
-              <Tooltip 
+              <Tooltip
                 formatter={(value, name) => [`${value} Tasks`, name]}
                 contentStyle={{ borderRadius: '4px', border: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
               />
@@ -190,27 +224,27 @@ const TaskStats = ({ tasks }) => {
           </div>
         </div>
       </div>
-      
+
       <div className="progress-section">
         <h3>Overall Progress</h3>
         <div className="progress-bar-container">
-          <div 
-            className="progress-bar" 
+          <div
+            className="progress-bar"
             style={{ width: `${progressPercentage}%` }}
           >
             {progressPercentage}%
           </div>
         </div>
       </div>
-      
+
       <div className="deadlines-section">
         <div className="deadlines-header">
           <h3>Upcoming Deadlines</h3>
           <span className="deadlines-count">{allUpcomingDeadlines.length} tasks</span>
         </div>
-        
-        <div 
-          className="deadline-cards-container" 
+
+        <div
+          className="deadline-cards-container"
           onScroll={handleDeadlinesScroll}
           ref={deadlinesContainerRef}
         >
@@ -219,8 +253,8 @@ const TaskStats = ({ tasks }) => {
               displayedDeadlines.map(task => {
                 const dueDate = new Date(task.dueDate);
                 const isToday = dueDate.toDateString() === today.toDateString();
-                const isWithinThreeDays = dueDate <= threeDaysFromNow;
-                
+                const isWithinThreeDays = dueDate <= threeDaysFromNow && !isToday;
+
                 return (
                   <div key={task.id} className="deadline-card">
                     <div className="deadline-card-content">
@@ -230,9 +264,14 @@ const TaskStats = ({ tasks }) => {
                           {getPriorityLabel(task.priority)}
                         </span>
                       </div>
-                      <span className={`deadline-date ${isToday ? 'today' : isWithinThreeDays ? 'soon' : ''}`}>
-                        {isToday ? 'Today' : isWithinThreeDays ? 'In 3 days' : formatDate(task.dueDate)}
-                      </span>
+                      <div className="deadline-details">
+                        <span className={`deadline-date ${isToday ? 'today' : isWithinThreeDays ? 'soon' : ''}`}>
+                          {isToday ? 'Today' : isWithinThreeDays ? 'In 3 days' : formatDate(task.dueDate)}
+                        </span>
+                        <span className="deadline-owner">
+                          Assigned to: {task.userName || task.userName || 'Unknown'}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 );
@@ -240,7 +279,7 @@ const TaskStats = ({ tasks }) => {
             ) : (
               <div className="no-deadlines">No upcoming deadlines</div>
             )}
-            
+
             {hasMoreDeadlines && (
               <div className="loading-more">Loading more deadlines as you scroll...</div>
             )}
