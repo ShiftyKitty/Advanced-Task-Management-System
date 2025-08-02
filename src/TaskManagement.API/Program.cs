@@ -79,10 +79,8 @@ app.UseHttpsRedirection();
 app.UseCors();
 
 // Use our custom request logging middleware
+app.UseAuthentication(); 
 app.UseRequestLogging();
-
-// Add authentication middleware BEFORE authorization
-app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
