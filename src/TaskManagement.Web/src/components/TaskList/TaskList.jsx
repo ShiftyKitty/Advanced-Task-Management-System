@@ -205,7 +205,7 @@ const TaskList = () => {
         {visibleTasks.length === 0 ? (
           <div className="no-tasks">
             {filters.filter === 'Archived' || filters.status === '3' ? 
-              'No archived tasks match your filters' : 
+              'No archived tasks found. To archive a task, open it and change its status to "Archived".' : 
               'No tasks match your filters'}
           </div>
         ) : (
@@ -243,12 +243,21 @@ const TaskList = () => {
         <TaskStats tasks={tasks.filter(task => task.status !== 3)} />
       )}
       
-      {/* Show archived stats when viewing archived tasks */}
-      {(filters.showArchived || filters.filter === 'Archived') && taskCounts.archived > 0 && (
+      {/* Show archived info section regardless of whether there are archived tasks */}
+      {(filters.showArchived || filters.filter === 'Archived') && (
         <div className="archived-info">
           <h2>Archived Tasks</h2>
-          <p>You have {taskCounts.archived} archived tasks. Archived tasks are hidden from regular views and reports.</p>
-          <p>To restore a task from the archive, open it and change its status.</p>
+          {taskCounts.archived > 0 ? (
+            <>
+              <p>You have {taskCounts.archived} archived task{taskCounts.archived !== 1 ? 's' : ''}. Archived tasks are hidden from regular views and reports.</p>
+              <p>To restore a task from the archive, open it and change its status.</p>
+            </>
+          ) : (
+            <>
+              <p>No archived tasks found.</p>
+              <p>To archive a task, open it and change its status to "Archived".</p>
+            </>
+          )}
         </div>
       )}
     </div>
