@@ -1,0 +1,8 @@
+2025-08-03 09:43:31 - HTTP POST /api/auth/login requested from unknown by testuser (login attempt)
+2025-08-03 09:43:32 - HTTP GET /api/tasks requested from unknown by test_user
+2025-08-03 09:43:32 - HTTP POST /api/tasks requested from unknown by anonymous
+2025-08-03 09:43:32 - HTTP GET /api/tasks requested from 127.0.0.1 by anonymous
+2025-08-03 09:58:47 - HTTP POST /api/auth/login requested from unknown by testuser (login attempt)
+2025-08-03 09:58:47 - HTTP GET /api/tasks requested from unknown by test_user
+2025-08-03 09:58:47 - HTTP POST /api/tasks requested from unknown by anonymous
+2025-08-03 09:58:47 - HTTP GET /api/tasks requested from 127.0.0.1 by anonymous
