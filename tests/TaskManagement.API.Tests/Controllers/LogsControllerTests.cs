@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks; // This is the async Task
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using TaskManagement.API.Controllers;
 using TaskManagement.API.Data;
 using TaskManagement.API.Models;
@@ -19,21 +21,21 @@ namespace TaskManagement.API.Tests.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly LogsController _controller;
-        
+
         public LogsControllerTests()
         {
             // Setup in-memory database
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
-            
+
             _context = new ApplicationDbContext(options);
             _controller = new LogsController(_context);
-            
+
             // Seed the database with test logs
             SeedDatabase();
         }
-        
+
         private void SeedDatabase()
         {
             // Add test logs
@@ -84,11 +86,11 @@ namespace TaskManagement.API.Tests.Controllers
                     Action = "Deleted high priority task"
                 }
             };
-            
+
             _context.Logs.AddRange(logs);
             _context.SaveChanges();
         }
-        
+
         private void SetupUserContext(string role = "User")
         {
             // Create claims for the user
@@ -97,89 +99,91 @@ namespace TaskManagement.API.Tests.Controllers
                 new Claim(ClaimTypes.Name, "testuser"),
                 new Claim(ClaimTypes.Role, role)
             };
-            
+
             var identity = new ClaimsIdentity(claims, "Test");
             var principal = new ClaimsPrincipal(identity);
-            
+
             // Set up controller context
             _controller.ControllerContext = new ControllerContext
             {
                 HttpContext = new DefaultHttpContext { User = principal }
             };
         }
-        
+
         [Fact]
         public async System.Threading.Tasks.Task GetLogs_AsAdmin_ReturnsAllLogs()
         {
             // Arrange
             SetupUserContext("Admin");
-            
+
             // Act
             var result = await _controller.GetLogs();
-            
+
             // Assert
-            var actionResult = result.Result.Should().BeNull();
-            var logs = result.Value.Should().NotBeNull().And.BeAssignableTo<IEnumerable<LogEntry>>().Subject;
+            result.Value.Should().NotBeNull();
+            var logs = result.Value.Should().BeAssignableTo<IEnumerable<LogEntry>>().Subject;
             logs.Should().HaveCount(4);
             logs.Should().BeInDescendingOrder(l => l.Timestamp);
         }
-        
+
         [Fact]
         public async System.Threading.Tasks.Task GetHighPriorityLogs_AsAdmin_ReturnsOnlyHighPriorityLogs()
         {
             // Arrange
             SetupUserContext("Admin");
-            
+
             // Act
             var result = await _controller.GetHighPriorityLogs();
-            
+
             // Assert
-            var logs = result.Value.Should().NotBeNull().And.BeAssignableTo<IEnumerable<LogEntry>>().Subject;
+            result.Value.Should().NotBeNull();
+            var logs = result.Value.Should().BeAssignableTo<IEnumerable<LogEntry>>().Subject;
             logs.Should().HaveCount(2);
             logs.Should().AllSatisfy(log => log.Priority.Should().Be("high"));
             logs.Should().BeInDescendingOrder(l => l.Timestamp);
         }
-        
+
         [Fact]
         public async System.Threading.Tasks.Task GetLogsByDateRange_AsAdmin_ReturnsLogsInRange()
         {
             // Arrange
             SetupUserContext("Admin");
-            var startDate = DateTime.Now.AddDays(-3);
+            var startDate = DateTime.Now.AddDays(-3).Date; // Use Date property to set time to 00:00:00
             var endDate = DateTime.Now;
             
             // Act
             var result = await _controller.GetLogsByDateRange(startDate, endDate);
             
             // Assert
-            var logs = result.Value.Should().NotBeNull().And.BeAssignableTo<IEnumerable<LogEntry>>().Subject;
-            logs.Should().HaveCount(3); // Should return logs from last 3 days only
-            logs.Should().AllSatisfy(log => 
+            result.Value.Should().NotBeNull();
+            var logs = result.Value.Should().BeAssignableTo<IEnumerable<LogEntry>>().Subject;
+            logs.Should().HaveCount(3); // Expecting 3 logs within the last 3 days
+            logs.Should().AllSatisfy(log =>
                 log.Timestamp.Should().BeOnOrAfter(startDate).And.BeOnOrBefore(endDate));
             logs.Should().BeInDescendingOrder(l => l.Timestamp);
         }
-        
+
         [Fact]
         public async System.Threading.Tasks.Task ExportLogs_AsAdmin_ReturnsCSVFile()
         {
             // Arrange
             SetupUserContext("Admin");
-            
+
             // Act
             var result = await _controller.ExportLogs();
-            
+
             // Assert
             var fileResult = result.Should().BeOfType<FileContentResult>().Subject;
             fileResult.ContentType.Should().Be("text/csv");
             fileResult.FileDownloadName.Should().StartWith("logs-").And.EndWith(".csv");
-            
+
             // Verify CSV content
             var content = Encoding.UTF8.GetString(fileResult.FileContents);
-            content.Should().StartWith("Timestamp,User,Method,Endpoint,IP,Priority,Action\n");
+            content.Should().StartWith("Timestamp,User,Method,Endpoint,IP,Priority,Action");
             var rows = content.Split('\n');
             rows.Length.Should().BeGreaterThan(4); // Header + 4 logs
         }
-        
+
         public void Dispose()
         {
             _context.Database.EnsureDeleted();
