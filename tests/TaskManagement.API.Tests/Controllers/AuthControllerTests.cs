@@ -92,13 +92,12 @@ namespace TaskManagement.API.Tests.Controllers
             var responseJson = JsonConvert.SerializeObject(unauthorizedResult.Value);
             var responseObj = JObject.Parse(responseJson);
             
-            // The property name might be 'message' or 'Message'
-            responseObj.Should().ContainAnyOf(
-                new[] { 
-                    new JProperty("message", "Username or password is incorrect"),
-                    new JProperty("Message", "Username or password is incorrect")
-                }
-            );
+            // Check for message property - try both casing options
+            bool hasCorrectMessage = 
+                (responseObj["message"]?.ToString() == "Username or password is incorrect") ||
+                (responseObj["Message"]?.ToString() == "Username or password is incorrect");
+            
+            hasCorrectMessage.Should().BeTrue("Response should contain an error message");
         }
         
         [Fact]
@@ -168,13 +167,12 @@ namespace TaskManagement.API.Tests.Controllers
             var responseJson = JsonConvert.SerializeObject(badRequestResult.Value);
             var responseObj = JObject.Parse(responseJson);
             
-            // The property name might be 'message' or 'Message'
-            responseObj.Should().ContainAnyOf(
-                new[] { 
-                    new JProperty("message", "Username and password are required"),
-                    new JProperty("Message", "Username and password are required")
-                }
-            );
+            // Check for message property - try both casing options
+            bool hasCorrectMessage = 
+                (responseObj["message"]?.ToString() == "Username and password are required") ||
+                (responseObj["Message"]?.ToString() == "Username and password are required");
+            
+            hasCorrectMessage.Should().BeTrue("Response should contain an error message about missing fields");
         }
         
         [Fact]
@@ -202,13 +200,12 @@ namespace TaskManagement.API.Tests.Controllers
             var responseJson = JsonConvert.SerializeObject(badRequestResult.Value);
             var responseObj = JObject.Parse(responseJson);
             
-            // The property name might be 'message' or 'Message'
-            responseObj.Should().ContainAnyOf(
-                new[] { 
-                    new JProperty("message", "Username or email is already taken"),
-                    new JProperty("Message", "Username or email is already taken")
-                }
-            );
+            // Check for message property - try both casing options
+            bool hasCorrectMessage = 
+                (responseObj["message"]?.ToString() == "Username or email is already taken") ||
+                (responseObj["Message"]?.ToString() == "Username or email is already taken");
+            
+            hasCorrectMessage.Should().BeTrue("Response should contain an error message about duplicate username");
         }
     }
 }
