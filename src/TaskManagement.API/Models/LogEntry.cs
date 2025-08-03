@@ -1,4 +1,3 @@
-// In Models/LogEntry.cs
 using System;
 using System.ComponentModel.DataAnnotations;
 

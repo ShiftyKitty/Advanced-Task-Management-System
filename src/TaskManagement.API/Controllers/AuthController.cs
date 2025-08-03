@@ -1,4 +1,3 @@
-// Controllers/AuthController.cs
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using TaskManagement.API.Models;

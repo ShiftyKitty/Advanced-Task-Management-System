@@ -1,4 +1,3 @@
-// Models/User.cs
 using System.ComponentModel.DataAnnotations;
 
 namespace TaskManagement.API.Models

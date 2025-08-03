@@ -15,7 +15,7 @@ namespace TaskManagement.API.Events
         {
             Task = task;
             Action = action;
-            Username = username ?? "system"; // Default value if username is null
+            Username = username ?? "system"; 
         }
     }
 
