@@ -1,4 +1,3 @@
-/* Updated TaskDetail.css */
 .task-detail-container {
   width: 100%;
   max-width: 800px;
@@ -14,7 +13,6 @@
   width: 100%;
 }
 
-/* Loading and error states */
 .loading-container,
 .error-container {
   background-color: #fff;
@@ -29,12 +27,12 @@
   color: #f44336;
 }
 
-/* Task Detail View */
 .task-detail-view {
   padding: 0;
 }
 
-.detail-card {
+.detail-card,
+.task-edit-form {
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
@@ -63,7 +61,6 @@
   flex-wrap: wrap;
 }
 
-/* Priority and status badges */
 .priority, .status {
   display: inline-block;
   padding: 4px 10px;
@@ -133,21 +130,14 @@
   line-height: 1.5;
 }
 
-.detail-actions {
+.detail-actions,
+.form-actions {
   display: flex;
   gap: 10px;
   justify-content: flex-end;
   margin-top: 20px;
   padding-top: 15px;
   border-top: 1px solid #eee;
-}
-
-/* Task Edit Form */
-.task-edit-form {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  padding: 20px;
 }
 
 .form-group {
@@ -189,47 +179,20 @@
   margin-bottom: 0;
 }
 
-.priority-select, .status-select {
+.priority-select.priority-0 { border-color: #4caf50; }
+.priority-select.priority-1 { border-color: #ffeb3b; }
+.priority-select.priority-2 { border-color: #f44336; }
+
+.status-select.status-0 { border-color: #90caf9; }
+.status-select.status-1 { border-color: #42a5f5; }
+.status-select.status-2 { border-color: #1e88e5; }
+.status-select.status-3 { border-color: #757575; }
+
+.priority-select, 
+.status-select {
   font-weight: 600;
 }
 
-.priority-select.priority-0 {
-  border-color: #4caf50;
-}
-
-.priority-select.priority-1 {
-  border-color: #ffeb3b;
-}
-
-.priority-select.priority-2 {
-  border-color: #f44336;
-}
-
-.status-select.status-0 {
-  border-color: #90caf9;
-}
-
-.status-select.status-1 {
-  border-color: #42a5f5;
-}
-
-.status-select.status-2 {
-  border-color: #1e88e5;
-}
-
-.status-select.status-3 {
-  border-color: #757575;
-}
-
-.form-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-  border-top: 1px solid #eee;
-  padding-top: 20px;
-}
-
-/* Buttons */
 button {
   padding: 10px 16px;
   border: none;
@@ -237,7 +200,7 @@ button {
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s, opacity 0.2s;
+  transition: background-color 0.2s, transform 0.1s;
 }
 
 button:disabled {
@@ -245,30 +208,29 @@ button:disabled {
   cursor: not-allowed;
 }
 
-.btn-cancel {
-  background-color: #f5f5f5;
-  color: #333;
+button:active:not(:disabled) {
+  transform: translateY(1px);
 }
 
-.btn-cancel:hover {
-  background-color: #e0e0e0;
-}
-
+.btn-cancel,
 .btn-back {
   background-color: #f5f5f5;
   color: #333;
 }
 
+.btn-cancel:hover,
 .btn-back:hover {
   background-color: #e0e0e0;
 }
 
-.btn-update, .btn-edit {
+.btn-update,
+.btn-edit {
   background-color: #2196f3;
   color: white;
 }
 
-.btn-update:hover, .btn-edit:hover {
+.btn-update:hover,
+.btn-edit:hover {
   background-color: #1976d2;
 }
 
@@ -290,7 +252,6 @@ button:disabled {
   background-color: #388e3c;
 }
 
-/* Modal */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -307,10 +268,10 @@ button:disabled {
 .modal {
   background-color: white;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   padding: 20px;
-  width: 400px;
-  max-width: 90%;
+  width: 90%;
+  max-width: 500px;
 }
 
 .modal h3 {
@@ -320,17 +281,18 @@ button:disabled {
 }
 
 .modal p {
-  margin-bottom: 20px;
+  margin: 16px 0;
+  line-height: 1.5;
   color: #555;
 }
 
 .modal-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 12px;
+  margin-top: 20px;
 }
 
-/* For the task owner display */
 .task-owner {
   display: block;
   margin-top: 8px;
@@ -354,29 +316,6 @@ button:disabled {
   color: #f44336;
 }
 
-/* Improve modal styling */
-.modal {
-  padding: 20px;
-  max-width: 500px;
-  width: 90%;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-}
-
-.modal p {
-  margin: 16px 0;
-  line-height: 1.5;
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 20px;
-}
-
-/* Responsive */
 @media (max-width: 768px) {
   .form-row {
     flex-direction: column;
@@ -392,12 +331,43 @@ button:disabled {
     align-items: flex-start;
   }
   
-  .detail-actions, .form-actions {
+  .detail-actions,
+  .form-actions {
     flex-direction: column;
     gap: 10px;
   }
   
-  .detail-actions button, .form-actions button {
+  .detail-actions button,
+  .form-actions button {
     width: 100%;
   }
 }
+
+/* 
+Design/Coding Choices:
+
+1. Visual Semantics:
+   - Color-coded priorities and statuses for intuitive recognition
+   - Consistent element styling between view and edit modes
+   - Strong visual indicators for overdue tasks and destructive actions
+
+2. Layout Strategy:
+   - Shared card styling for consistent visual hierarchy
+   - Form layout optimized for quick scanning and completion
+   - Conditional interactive elements based on context
+
+3. Responsive Approach:
+   - Single-column layouts on mobile for better touch targets
+   - Full-width buttons on smaller screens for better accessibility
+   - Flexible form groups that adapt to available space
+
+4. Interaction Design:
+   - Subtle animations for button interactions
+   - Modal dialogs for important confirmations
+   - Clear visual distinction between different action types
+
+5. Maintainability:
+   - Grouped related selectors to reduce repetition
+   - Consistent color palette derived from Material Design
+   - Property ordering from layout to appearance to behavior
+*/

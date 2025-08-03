@@ -1,4 +1,3 @@
-/* TaskList.css */
 .task-list-container {
   width: 100%;
   background-color: #f5f7fa;
@@ -24,6 +23,12 @@
   margin: 0;
 }
 
+.task-actions {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
 .create-button {
   background-color: #4CAF50;
   color: white;
@@ -31,6 +36,32 @@
   padding: 8px 16px;
   border-radius: 4px;
   font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.create-button:hover {
+  background-color: #388e3c;
+}
+
+.archive-btn {
+  background-color: #f5f5f5;
+  color: #555;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.archive-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.archive-btn.active {
+  background-color: #e0e0e0;
+  border-color: #ccc;
+  color: #333;
 }
 
 .filters-container {
@@ -53,6 +84,7 @@
   background-color: white;
   min-width: 150px;
   font-size: 0.9rem;
+  color: #333;
 }
 
 .task-list {
@@ -75,14 +107,15 @@
   border-bottom: none;
 }
 
-.task-checkbox {
-  margin-right: 15px;
+.task-item.archived {
+  opacity: 0.7;
+  background-color: #f9f9f9;
+  border-left: 3px solid #9e9e9e;
 }
 
-.task-checkbox input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  margin: 0;
+.task-item.archived .task-title h3 {
+  text-decoration: line-through;
+  color: #757575;
 }
 
 .task-details {
@@ -110,22 +143,46 @@
   text-overflow: ellipsis;
 }
 
+.task-meta {
+  margin-top: 5px;
+  font-size: 0.9rem;
+}
+
+.due-date {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.task-owner {
+  display: inline-block;
+  margin-left: 15px;
+  color: #555;
+  font-size: 0.9rem;
+}
+
 .task-badges {
   display: flex;
   gap: 10px;
   align-items: center;
 }
 
-/* Priority badges */
-.priority {
+.priority,
+.status {
   display: inline-block;
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
-  min-width: 70px;
   text-align: center;
+}
+
+.priority {
+  min-width: 70px;
+}
+
+.status {
+  min-width: 100px;
 }
 
 .priority-0 {
@@ -141,18 +198,6 @@
 .priority-2 {
   background-color: #ffebee;
   color: #c62828;
-}
-
-/* Status badges */
-.status {
-  display: inline-block;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  min-width: 100px;
-  text-align: center;
 }
 
 .status-0 {
@@ -175,6 +220,12 @@
   color: #757575;
 }
 
+.no-tasks {
+  padding: 30px;
+  text-align: center;
+  color: #757575;
+}
+
 .loading-more {
   text-align: center;
   padding: 12px;
@@ -184,7 +235,6 @@
   border-top: 1px solid #eee;
 }
 
-/* Task Overview Section */
 .task-overview {
   margin-top: 30px;
 }
@@ -244,29 +294,12 @@
   margin-right: 8px;
 }
 
-.legend-color.high {
-  background-color: #f44336;
-}
-
-.legend-color.medium {
-  background-color: #ffeb3b;
-}
-
-.legend-color.low {
-  background-color: #4caf50;
-}
-
-.legend-color.todo {
-  background-color: #90caf9;
-}
-
-.legend-color.inprogress {
-  background-color: #42a5f5;
-}
-
-.legend-color.completed {
-  background-color: #1e88e5;
-}
+.legend-color.high { background-color: #f44336; }
+.legend-color.medium { background-color: #ffeb3b; }
+.legend-color.low { background-color: #4caf50; }
+.legend-color.todo { background-color: #90caf9; }
+.legend-color.inprogress { background-color: #42a5f5; }
+.legend-color.completed { background-color: #1e88e5; }
 
 .progress-section {
   background-color: #fff;
@@ -344,84 +377,6 @@
   font-weight: 600;
 }
 
-.no-tasks {
-  padding: 30px;
-  text-align: center;
-  color: #757575;
-}
-
-.filters select {
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background-color: white;
-  min-width: 150px;
-  font-size: 0.9rem;
-  color: #333; 
-}
-
-.filters option {
-  color: #333; 
-}
-
-.task-meta {
-  margin-top: 5px;
-  font-size: 0.9rem;
-}
-
-.due-date {
-  color: #666;
-  font-size: 0.85rem;
-}
-
-/* Add to TaskList.css */
-
-/* Archive toggle button */
-.task-actions {
-  display: flex;
-  gap: 15px;
-  align-items: center;
-}
-
-.archive-btn {
-  background-color: #f5f5f5;
-  color: #555;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 8px 12px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.archive-btn:hover {
-  background-color: #e0e0e0;
-}
-
-.archive-btn.active {
-  background-color: #e0e0e0;
-  border-color: #ccc;
-  color: #333;
-}
-
-/* Archived task styling */
-.task-item.archived {
-  opacity: 0.7;
-  background-color: #f9f9f9;
-  border-left: 3px solid #9e9e9e;
-}
-
-.task-item.archived .task-title h3 {
-  text-decoration: line-through;
-  color: #757575;
-}
-
-.status-3 {
-  background-color: #eeeeee;
-  color: #757575;
-}
-
-/* Archived info section */
 .archived-info {
   background-color: #fff;
   border-radius: 8px;
@@ -442,37 +397,17 @@
   margin-bottom: 10px;
 }
 
-/* Add to TaskList.css */
-.filters select {
-  margin-right: 10px;
-  padding: 8px 12px;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-  background-color: #fff;
-  font-size: 0.9rem;
-}
-
-.task-owner {
-  display: inline-block;
-  margin-left: 15px;
-  color: #555;
-  font-size: 0.9rem;
-}
-
 @media (max-width: 768px) {
   .filters {
-    display: flex;
     flex-direction: column;
     gap: 10px;
   }
   
   .filters select {
-    margin-right: 0;
     width: 100%;
   }
   
   .task-meta {
-    display: flex;
     flex-direction: column;
     gap: 5px;
   }
@@ -480,4 +415,37 @@
   .task-owner {
     margin-left: 0;
   }
+  
+  .charts-container {
+    flex-direction: column;
+  }
 }
+
+/* 
+Design/Coding Choices:
+
+1. Visual Hierarchy:
+   - Card-based UI with consistent shadows and borders
+   - Color-coded status and priority badges for quick visual scanning
+   - Subtle visual cues for archived items (opacity, strikethrough)
+
+2. Component Architecture:
+   - Container-based layout for modular composition
+   - Clear separation between filtering UI and content display
+   - Consistent card patterns across statistics and task items
+
+3. User Experience:
+   - Truncated descriptions with ellipsis to maintain layout integrity
+   - Interactive states for all clickable elements
+   - Visual feedback for empty states and loading conditions
+
+4. Performance Considerations:
+   - Fixed height with scrolling container prevents DOM bloat with large datasets
+   - Optimized selectors with minimal nesting for better rendering
+   - Grouped similar styles to reduce redundancy
+
+5. Responsive Strategy:
+   - Stacked layouts on mobile for improved readability
+   - Adjustments to spacing and margins at breakpoints
+   - Flexible width containers with max-width constraints
+*/

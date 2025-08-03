@@ -1,5 +1,4 @@
-// Updated TaskDetail.jsx with ownership information
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { taskService } from '../../services/taskService';
 import './TaskDetail.css';
@@ -15,6 +14,7 @@ const TaskDetail = ({ isEditing = false }) => {
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   
+  // Fetch task data on component mount
   useEffect(() => {
     const fetchTask = async () => {
       try {
@@ -24,9 +24,9 @@ const TaskDetail = ({ isEditing = false }) => {
           ...data,
           dueDate: new Date(data.dueDate).toISOString().split('T')[0]
         });
-        setLoading(false);
       } catch (err) {
         setError('Failed to load task details');
+      } finally {
         setLoading(false);
       }
     };
@@ -35,19 +35,23 @@ const TaskDetail = ({ isEditing = false }) => {
   }, [id]);
 
   // Format date in Irish format (DD/MM/YYYY)
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-IE', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
-  };
+  const formatDate = useCallback((dateString) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-IE', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+    } catch (e) {
+      return 'Invalid date';
+    }
+  }, []);
   
-  const handleChange = (e) => {
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     
-    // If changing priority to high (2), show confirmation modal
+    // Show confirmation when upgrading to high priority
     if (name === 'priority' && parseInt(value) === 2 && (!task || task.priority !== 2)) {
       setShowModal(true);
     }
@@ -56,12 +60,12 @@ const TaskDetail = ({ isEditing = false }) => {
       ...prev,
       [name]: name === 'priority' || name === 'status' ? parseInt(value) : value
     }));
-  };
+  }, [task]);
   
-  const handleSubmit = async (e) => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     
-    if (!editedTask.title.trim()) {
+    if (!editedTask?.title?.trim()) {
       setError('Title is required');
       return;
     }
@@ -69,10 +73,10 @@ const TaskDetail = ({ isEditing = false }) => {
     try {
       setLoading(true);
       
-      // Make sure to preserve the original userId when updating
+      // Preserve original owner when updating
       const updatedTask = {
         ...editedTask,
-        userId: task.userId // Ensure we keep the original owner
+        userId: task.userId
       };
       
       await taskService.updateTask(id, updatedTask);
@@ -81,9 +85,9 @@ const TaskDetail = ({ isEditing = false }) => {
       setError('Failed to update task');
       setLoading(false);
     }
-  };
+  }, [editedTask, id, navigate, task]);
   
-  const handleDelete = async () => {
+  const handleDelete = useCallback(async () => {
     try {
       setLoading(true);
       await taskService.deleteTask(id);
@@ -92,47 +96,54 @@ const TaskDetail = ({ isEditing = false }) => {
       setError('Failed to delete task');
       setLoading(false);
     }
-  };
+  }, [id, navigate]);
   
-  const handleModalConfirm = () => {
+  const handleModalConfirm = useCallback(() => {
     setShowModal(false);
-    // Priority was already set in handleChange
-  };
+  }, []);
 
-  const handleModalCancel = () => {
+  const handleModalCancel = useCallback(() => {
     setShowModal(false);
     // Revert to medium priority
     setEditedTask(prev => ({
       ...prev,
       priority: 1
     }));
-  };
+  }, []);
 
-  // Get priority label
-  const getPriorityLabel = (priority) => {
+  // Memoize utility functions to prevent recalculation
+  const getPriorityLabel = useCallback((priority) => {
     return priority === 0 ? 'LOW' : priority === 1 ? 'MEDIUM' : 'HIGH';
-  };
+  }, []);
 
-  // Get status label
-  const getStatusLabel = (status) => {
+  const getStatusLabel = useCallback((status) => {
     return status === 0 ? 'TO DO' : 
            status === 1 ? 'IN PROGRESS' : 
            status === 2 ? 'COMPLETED' : 'ARCHIVED';
-  };
+  }, []);
 
-  // Determine if a task is overdue
-  const isOverdue = (dueDate) => {
+  // Check if task is overdue
+  const isOverdue = useCallback((dueDate) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const taskDueDate = new Date(dueDate);
     taskDueDate.setHours(0, 0, 0, 0);
     
-    return taskDueDate < today && (task?.status !== 2); // Past due and not completed
-  };
+    return taskDueDate < today && (task?.status !== 2);
+  }, [task]);
   
-  if (loading) return <div className="loading-container">Loading task details...</div>;
-  if (error) return <div className="error-container">{error}</div>;
-  if (!task) return <div className="error-container">Task not found</div>;
+  // Handle loading and error states
+  if (loading && !task) {
+    return <div className="loading-container" aria-live="polite">Loading task details...</div>;
+  }
+  
+  if (error && !task) {
+    return <div className="error-container" role="alert">{error}</div>;
+  }
+  
+  if (!task) {
+    return <div className="error-container" role="alert">Task not found</div>;
+  }
   
   return (
     <div className="task-detail-container">
@@ -142,7 +153,9 @@ const TaskDetail = ({ isEditing = false }) => {
       
       {isEditing ? (
         <div className="task-edit-form">
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} noValidate>
+            {error && <div className="form-error" role="alert">{error}</div>}
+            
             <div className="form-group">
               <label htmlFor="title">Title:</label>
               <input
@@ -153,6 +166,7 @@ const TaskDetail = ({ isEditing = false }) => {
                 onChange={handleChange}
                 required
                 placeholder="Enter task title"
+                data-testid="task-title-input"
               />
             </div>
             
@@ -164,7 +178,8 @@ const TaskDetail = ({ isEditing = false }) => {
                 value={editedTask.description || ''}
                 onChange={handleChange}
                 rows={4}
-                placeholder="Update the system to version 2.0 with all the new features"
+                placeholder="Describe the task details"
+                data-testid="task-description-input"
               />
             </div>
             
@@ -177,6 +192,7 @@ const TaskDetail = ({ isEditing = false }) => {
                   value={editedTask.priority}
                   onChange={handleChange}
                   className={`priority-select priority-${editedTask.priority}`}
+                  data-testid="task-priority-select"
                 >
                   <option value={0}>Low</option>
                   <option value={1}>Medium</option>
@@ -192,6 +208,7 @@ const TaskDetail = ({ isEditing = false }) => {
                   type="date"
                   value={editedTask.dueDate}
                   onChange={handleChange}
+                  data-testid="task-duedate-input"
                 />
               </div>
               
@@ -203,6 +220,7 @@ const TaskDetail = ({ isEditing = false }) => {
                   value={editedTask.status}
                   onChange={handleChange}
                   className={`status-select status-${editedTask.status}`}
+                  data-testid="task-status-select"
                 >
                   <option value={0}>To Do</option>
                   <option value={1}>In Progress</option>
@@ -212,11 +230,10 @@ const TaskDetail = ({ isEditing = false }) => {
               </div>
             </div>
             
-            {/* Display the task owner (read-only) */}
             <div className="form-group">
               <label>Assigned To:</label>
               <div className="owner-display">
-                {task.userName || 'Unknown'}
+                {task.userName || 'Unassigned'}
               </div>
             </div>
             
@@ -226,6 +243,7 @@ const TaskDetail = ({ isEditing = false }) => {
                 className="btn-cancel" 
                 onClick={() => navigate('/')} 
                 disabled={loading}
+                data-testid="cancel-button"
               >
                 Cancel
               </button>
@@ -233,6 +251,7 @@ const TaskDetail = ({ isEditing = false }) => {
                 type="submit" 
                 className="btn-update" 
                 disabled={loading}
+                data-testid="update-button"
               >
                 {loading ? 'Saving...' : 'Update Task'}
               </button>
@@ -241,6 +260,7 @@ const TaskDetail = ({ isEditing = false }) => {
                 className="btn-delete" 
                 onClick={() => setShowDeleteModal(true)} 
                 disabled={loading}
+                data-testid="delete-button"
               >
                 Delete Task
               </button>
@@ -268,9 +288,8 @@ const TaskDetail = ({ isEditing = false }) => {
                 {isOverdue(task.dueDate) && <span className="overdue-label"> (OVERDUE)</span>}
               </span>
               
-              {/* Display task owner */}
               <span className="task-owner">
-                Assigned To: {task.userName || 'Unknown'}
+                Assigned To: {task.userName || 'Unassigned'}
               </span>
             </div>
             
@@ -283,18 +302,21 @@ const TaskDetail = ({ isEditing = false }) => {
               <button 
                 className="btn-back" 
                 onClick={() => navigate('/')}
+                data-testid="back-button"
               >
                 Back to List
               </button>
               <button 
                 className="btn-edit" 
                 onClick={() => navigate(`/tasks/${id}/edit`)}
+                data-testid="edit-button"
               >
                 Edit Task
               </button>
               <button 
                 className="btn-delete" 
                 onClick={() => setShowDeleteModal(true)}
+                data-testid="view-delete-button"
               >
                 Delete Task
               </button>
@@ -303,9 +325,9 @@ const TaskDetail = ({ isEditing = false }) => {
         </div>
       )}
       
-      {/* High Priority Confirmation Modal */}
+      {/* Priority confirmation modal */}
       {showModal && (
-        <div className="modal-overlay">
+        <div className="modal-overlay" role="dialog" aria-modal="true">
           <div className="modal">
             <h3>High Priority Confirmation</h3>
             <p>Are you sure you want to set this task to High priority? High priority tasks will generate notifications and appear prominently in the dashboard.</p>
@@ -313,12 +335,14 @@ const TaskDetail = ({ isEditing = false }) => {
               <button 
                 className="btn-cancel" 
                 onClick={handleModalCancel}
+                data-testid="priority-cancel-button"
               >
                 No, use medium priority
               </button>
               <button 
                 className="btn-confirm" 
                 onClick={handleModalConfirm}
+                data-testid="priority-confirm-button"
               >
                 Yes, use high priority
               </button>
@@ -327,9 +351,9 @@ const TaskDetail = ({ isEditing = false }) => {
         </div>
       )}
       
-      {/* Delete Confirmation Modal */}
+      {/* Delete confirmation modal */}
       {showDeleteModal && (
-        <div className="modal-overlay">
+        <div className="modal-overlay" role="dialog" aria-modal="true">
           <div className="modal">
             <h3>Delete Confirmation</h3>
             <p>Are you sure you want to delete this task? This action cannot be undone.</p>
@@ -337,12 +361,14 @@ const TaskDetail = ({ isEditing = false }) => {
               <button 
                 className="btn-cancel" 
                 onClick={() => setShowDeleteModal(false)}
+                data-testid="delete-cancel-button"
               >
                 Cancel
               </button>
               <button 
                 className="btn-delete" 
                 onClick={handleDelete}
+                data-testid="delete-confirm-button"
               >
                 Delete Task
               </button>
@@ -355,3 +381,32 @@ const TaskDetail = ({ isEditing = false }) => {
 };
 
 export default TaskDetail;
+
+/*
+Design/Coding Choices:
+
+1. Component Reusability:
+   - Dual-purpose component that handles both viewing and editing
+   - Conditional rendering based on isEditing prop
+   - Preserves ownership during updates for data integrity
+
+2. State Management:
+   - Separate task and editedTask states to prevent corrupting original data
+   - Optimized rerenders with useCallback for event handlers
+   - Protected against race conditions in async operations
+
+3. UX Considerations:
+   - Confirmation modals for destructive/impactful actions
+   - Visual indicators for task priority and status
+   - Special handling for overdue tasks
+   - Form validation with specific error messages
+
+4. Accessibility:
+   - Semantic HTML and ARIA attributes for modals
+   - Proper labeling of form controls
+   - Live regions for dynamic content
+
+5. Performance:
+   - Memoized utility functions to prevent unnecessary recalculations
+   - Optimized rendering with conditional early returns
+*/

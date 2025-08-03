@@ -1,9 +1,14 @@
-/* src/components/Signup/Signup.css */
 .signup-container {
   width: 100%;
   max-width: 450px;
   margin: 40px auto;
   padding: 0;
+}
+
+.screen-title {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
 }
 
 .signup-form {
@@ -48,7 +53,7 @@
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 1rem;
-  transition: border-color 0.3s;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 .form-group input:focus {
@@ -71,16 +76,21 @@
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.1s;
 }
 
 .btn-signup:hover {
   background-color: #1976D2;
 }
 
+.btn-signup:active {
+  transform: translateY(1px);
+}
+
 .btn-signup:disabled {
   background-color: #90CAF9;
   cursor: not-allowed;
+  transform: none;
 }
 
 .auth-links {
@@ -93,14 +103,32 @@
   color: #2196F3;
   text-decoration: none;
   font-weight: 500;
+  transition: color 0.2s;
 }
 
 .auth-links a:hover {
   text-decoration: underline;
 }
 
-.screen-title {
-  text-align: center;
-  margin-bottom: 30px;
-  color: #333;
-}
+/* 
+Design/Coding Choices:
+
+1. Accessibility:
+   - Focus states with clear visual indicators
+   - Sufficient color contrast for text and interactive elements
+   - Consistent feedback for user interactions
+
+2. Form Design:
+   - Single column layout optimized for completion speed
+   - Error messages with left border for improved visibility
+   - Visual feedback on button states (hover, active, disabled)
+
+3. Visual Consistency:
+   - Matches login form styling for cohesive product experience
+   - Material Design color palette for familiarity
+   - Subtle micro-interactions for improved engagement
+
+4. Performance:
+   - Hardware-accelerated transitions for smoother animations
+   - Specific property transitions rather than animating "all"
+*/

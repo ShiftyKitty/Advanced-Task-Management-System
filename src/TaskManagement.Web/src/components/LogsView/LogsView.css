@@ -1,4 +1,3 @@
-/* LogsView.css */
 .logs-container {
   width: 100%;
   max-width: 1200px;
@@ -98,13 +97,13 @@
 }
 
 .log-item.high-priority {
-  background-color: #ffebee; /* Light red background */
-  border-left: 4px solid #f44336; /* Red border */
+  background-color: #ffebee;
+  border-left: 4px solid #f44336;
 }
 
 .high-priority-label {
   font-weight: bold;
-  color: #c62828; /* Dark red text */
+  color: #c62828;
   text-transform: uppercase;
   margin-right: 5px;
 }
@@ -186,3 +185,25 @@
     gap: 5px;
   }
 }
+
+/* 
+Design/Coding Choices:
+
+1. Visual Indicators:
+   - Color-coded buttons for quick recognition of filter types
+   - Left border accent for high-priority logs to improve scanability
+   - Subtle shadows and borders to create depth hierarchy
+
+2. Virtualized Content:
+   - Fixed height container with scrolling to handle large datasets
+   - Progressive loading indicators for better perceived performance
+
+3. Responsive Approach:
+   - Stacked layouts on mobile for better tap targets
+   - Simplified information display on smaller screens
+
+4. Accessibility:
+   - Sufficient color contrast for text elements
+   - Semantic color usage (red for high priority, blue for general actions)
+   - Adequate spacing for touch interactions
+*/

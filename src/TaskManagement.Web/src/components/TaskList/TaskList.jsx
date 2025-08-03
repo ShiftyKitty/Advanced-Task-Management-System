@@ -1,5 +1,4 @@
-// Enhanced TaskList.jsx with sorting functionality
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { taskService } from '../../services/taskService';
 import TaskStats from '../TaskStats/TaskStats';
@@ -15,36 +14,38 @@ const TaskList = () => {
     filter: 'All',
     priority: 'All',
     status: 'All',
-    showArchived: false // Filter for archived tasks
+    showArchived: false
   });
   
-  // New state for sorting
-  const [sortMethod, setSortMethod] = useState('dueDate-asc'); // Default sort by due date (ascending)
+  const [sortMethod, setSortMethod] = useState('dueDate-asc');
   
-  // Number of tasks to load at once for lazy loading
   const taskIncrement = 5;
   const [tasksToShow, setTasksToShow] = useState(taskIncrement);
 
-  // Helper function to format dates in Irish format (DD/MM/YYYY)
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-IE', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
-  };
+  const formatDate = useCallback((dateString) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-IE', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+    } catch (e) {
+      return 'Invalid date';
+    }
+  }, []);
 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
+        setLoading(true);
         const data = await taskService.getTasks();
         setTasks(data);
         setFilteredTasks(data);
         setVisibleTasks(data.slice(0, taskIncrement));
-        setLoading(false);
       } catch (err) {
-        setError('Failed to fetch tasks. Please try again later.');
+        setError(`Failed to fetch tasks: ${err.message || 'Please try again later'}`);
+      } finally {
         setLoading(false);
       }
     };
@@ -52,9 +53,7 @@ const TaskList = () => {
     fetchTasks();
   }, []);
 
-  // Apply filters and sorting
   useEffect(() => {
-    // Apply filters first
     let result = tasks;
     
     // Apply time-based filter
@@ -87,11 +86,11 @@ const TaskList = () => {
           result = result.filter(task => {
             const dueDate = new Date(task.dueDate);
             dueDate.setHours(0, 0, 0, 0);
-            return dueDate < today && task.status !== 2; // Not completed and past due
+            return dueDate < today && task.status !== 2;
           });
           break;
         case 'Archived':
-          result = result.filter(task => task.status === 3); // Show only archived tasks
+          result = result.filter(task => task.status === 3);
           break;
         default:
           break;
@@ -107,15 +106,14 @@ const TaskList = () => {
     if (filters.status !== 'All') {
       result = result.filter(task => task.status === parseInt(filters.status));
     } else if (!filters.showArchived && filters.filter !== 'Archived') {
-      // Hide archived tasks by default unless explicitly showing archived
+      // Hide archived tasks by default
       result = result.filter(task => task.status !== 3);
     }
     
-    // Then apply sorting
+    // Apply sorting
     const [sortBy, direction] = sortMethod.split('-');
     const sortMultiplier = direction === 'asc' ? 1 : -1;
     
-    // Sort the filtered results
     result = [...result].sort((a, b) => {
       switch (sortBy) {
         case 'dueDate':
@@ -137,53 +135,49 @@ const TaskList = () => {
     setVisibleTasks(result.slice(0, tasksToShow));
   }, [filters, sortMethod, tasks, tasksToShow]);
 
-  // Handle scroll for lazy loading
-  const handleScroll = (e) => {
-    // Load more when scrolled to within 50px of the bottom
+  const handleScroll = useCallback((e) => {
     const scrollPosition = e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight;
     if (scrollPosition < 50 && visibleTasks.length < filteredTasks.length) {
       const nextBatch = Math.min(tasksToShow + taskIncrement, filteredTasks.length);
       setTasksToShow(nextBatch);
-      setVisibleTasks(filteredTasks.slice(0, nextBatch));
     }
-  };
+  }, [filteredTasks.length, tasksToShow, visibleTasks.length]);
 
-  const handleFilterChange = (e) => {
+  const handleFilterChange = useCallback((e) => {
     const { name, value } = e.target;
     setFilters(prev => ({
       ...prev,
       [name]: value
     }));
-    // Reset tasks to show when filtering
     setTasksToShow(taskIncrement);
-  };
+  }, []);
 
-  // Handle sort method change
-  const handleSortChange = (e) => {
+  const handleSortChange = useCallback((e) => {
     setSortMethod(e.target.value);
-    // Reset tasks to show when sorting
     setTasksToShow(taskIncrement);
-  };
+  }, []);
 
-  // Toggle showing archived tasks
-  const toggleArchived = () => {
+  const toggleArchived = useCallback(() => {
     setFilters(prev => ({
       ...prev,
       showArchived: !prev.showArchived
     }));
-    // Reset tasks to show when filtering
     setTasksToShow(taskIncrement);
-  };
+  }, []);
 
-  // Count tasks by status
-  const taskCounts = {
+  const taskCounts = useMemo(() => ({
     total: tasks.length,
     active: tasks.filter(task => task.status !== 3).length,
     archived: tasks.filter(task => task.status === 3).length
-  };
+  }), [tasks]);
 
-  if (loading) return <div>Loading tasks...</div>;
-  if (error) return <div className="error">{error}</div>;
+  if (loading && tasks.length === 0) {
+    return <div className="loading-state" aria-live="polite">Loading tasks...</div>;
+  }
+  
+  if (error && tasks.length === 0) {
+    return <div className="error" role="alert">{error}</div>;
+  }
 
   return (
     <div className="task-list-container">
@@ -196,17 +190,25 @@ const TaskList = () => {
             <button 
               className={`archive-btn ${filters.showArchived || filters.filter === 'Archived' ? 'active' : ''}`}
               onClick={toggleArchived}
+              aria-pressed={filters.showArchived}
+              data-testid="archive-toggle"
             >
               {filters.showArchived ? 'Hide Archived' : 'Show Archived'} ({taskCounts.archived})
             </button>
           </div>
-          <Link to="/create" className="create-button">+ Add Task</Link>
+          <Link to="/create" className="create-button" data-testid="add-task-button">+ Add Task</Link>
         </div>
       </div>
       
       <div className="filters-container">
         <div className="filters">
-          <select name="filter" onChange={handleFilterChange} value={filters.filter}>
+          <select 
+            name="filter" 
+            onChange={handleFilterChange} 
+            value={filters.filter}
+            aria-label="Filter tasks by time"
+            data-testid="time-filter"
+          >
             <option value="All">Filter: All</option>
             <option value="Today">Today</option>
             <option value="Upcoming">Upcoming</option>
@@ -214,14 +216,26 @@ const TaskList = () => {
             <option value="Archived">Archived</option>
           </select>
           
-          <select name="priority" onChange={handleFilterChange} value={filters.priority}>
+          <select 
+            name="priority" 
+            onChange={handleFilterChange} 
+            value={filters.priority}
+            aria-label="Filter tasks by priority"
+            data-testid="priority-filter"
+          >
             <option value="All">Priority: All</option>
             <option value="0">Low</option>
             <option value="1">Medium</option>
             <option value="2">High</option>
           </select>
           
-          <select name="status" onChange={handleFilterChange} value={filters.status}>
+          <select 
+            name="status" 
+            onChange={handleFilterChange} 
+            value={filters.status}
+            aria-label="Filter tasks by status"
+            data-testid="status-filter"
+          >
             <option value="All">Status: All</option>
             <option value="0">To Do</option>
             <option value="1">In Progress</option>
@@ -231,8 +245,13 @@ const TaskList = () => {
             )}
           </select>
           
-          {/* New sort dropdown */}
-          <select name="sort" onChange={handleSortChange} value={sortMethod}>
+          <select 
+            name="sort" 
+            onChange={handleSortChange} 
+            value={sortMethod}
+            aria-label="Sort tasks"
+            data-testid="sort-selector"
+          >
             <option value="dueDate-asc">Sort: Due Date (earliest)</option>
             <option value="dueDate-desc">Sort: Due Date (latest)</option>
             <option value="priority-asc">Sort: Priority (low to high)</option>
@@ -246,16 +265,25 @@ const TaskList = () => {
         </div>
       </div>
 
-      <div className="task-list" onScroll={handleScroll}>
+      <div 
+        className="task-list" 
+        onScroll={handleScroll}
+        aria-label="Task list"
+        data-testid="task-list"
+      >
         {visibleTasks.length === 0 ? (
-          <div className="no-tasks">
+          <div className="no-tasks" aria-live="polite">
             {filters.filter === 'Archived' || filters.status === '3' ? 
               'No archived tasks found. To archive a task, open it and change its status to "Archived".' : 
               'No tasks match your filters'}
           </div>
         ) : (
           visibleTasks.map(task => (
-            <div key={task.id} className={`task-item priority-${task.priority} ${task.status === 3 ? 'archived' : ''}`}>
+            <div 
+              key={task.id} 
+              className={`task-item priority-${task.priority} ${task.status === 3 ? 'archived' : ''}`}
+              data-testid={`task-${task.id}`}
+            >
               <div className="task-details">
                 <Link to={`/tasks/${task.id}`} className="task-title">
                   <h3>{task.title}</h3>
@@ -280,16 +308,16 @@ const TaskList = () => {
           ))
         )}
         {visibleTasks.length < filteredTasks.length && (
-          <div className="loading-more">Loading more tasks as you scroll...</div>
+          <div className="loading-more" aria-live="polite">
+            Loading more tasks as you scroll...
+          </div>
         )}
       </div>
       
-      {/* Only show task stats for non-archived view */}
       {(!filters.showArchived && filters.filter !== 'Archived') && (
         <TaskStats tasks={tasks.filter(task => task.status !== 3)} />
       )}
       
-      {/* Show archived info section regardless of whether there are archived tasks */}
       {(filters.showArchived || filters.filter === 'Archived') && (
         <div className="archived-info">
           <h2>Archived Tasks</h2>
@@ -311,3 +339,32 @@ const TaskList = () => {
 };
 
 export default TaskList;
+
+/*
+Design/Coding Choices:
+
+1. Performance Optimization:
+   - Memoized expensive calculations and callbacks to prevent unnecessary rerenders
+   - Implemented lazy loading to handle large datasets efficiently
+   - Multi-tiered state management for filtered and visible tasks
+
+2. Filter Architecture:
+   - Combined filtering and sorting in a single effect for performance
+   - Preserved filter state during view transitions
+   - Optimized date calculations for date-based filtering
+
+3. User Experience:
+   - Clear empty state messaging based on context
+   - Progressive loading with scroll detection
+   - Intelligent display of archive options based on current view
+
+4. Accessibility:
+   - ARIA attributes for dynamic content and interactive elements
+   - Semantic structure with proper heading hierarchy
+   - Live regions for status updates
+
+5. Maintainability:
+   - Organized code by logical function
+   - Conditional rendering for contextual UI elements
+   - Test IDs for automated testing support
+*/

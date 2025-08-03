@@ -1,9 +1,15 @@
-/* src/components/Login/Login.css */
 .login-container {
   width: 100%;
   max-width: 450px;
   margin: 40px auto;
   padding: 0;
+}
+
+.screen-title {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
+  font-weight: 600;
 }
 
 .login-form {
@@ -19,16 +25,7 @@
   text-align: center;
   color: #333;
   font-size: 1.8rem;
-}
-
-.error-message {
-  background-color: #ffebee;
-  color: #c62828;
-  padding: 12px 15px;
-  border-radius: 4px;
-  margin-bottom: 20px;
-  border-left: 4px solid #f44336;
-  font-size: 0.9rem;
+  font-weight: 500;
 }
 
 .form-group {
@@ -48,13 +45,24 @@
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 1rem;
-  transition: border-color 0.3s;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 .form-group input:focus {
   outline: none;
   border-color: #2196F3;
   box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+}
+
+.error-message {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 12px 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  border-left: 4px solid #f44336;
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
 .form-actions {
@@ -71,36 +79,61 @@
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.1s;
 }
 
 .btn-login:hover {
   background-color: #1976D2;
 }
 
+.btn-login:active {
+  transform: translateY(1px);
+}
+
 .btn-login:disabled {
   background-color: #90CAF9;
   cursor: not-allowed;
+  transform: none;
 }
 
 .auth-links {
   margin-top: 20px;
   text-align: center;
   font-size: 0.9rem;
+  color: #666;
 }
 
 .auth-links a {
   color: #2196F3;
   text-decoration: none;
   font-weight: 500;
+  transition: color 0.2s;
 }
 
 .auth-links a:hover {
   text-decoration: underline;
+  color: #1565C0;
 }
 
-.screen-title {
-  text-align: center;
-  margin-bottom: 30px;
-  color: #333;
-}
+/* 
+Design/Coding Choices:
+
+1. Visual Design:
+   - Card-based interface with subtle depth cues for better visual hierarchy
+   - Material Design color palette for consistency and familiarity
+   - Left border accent for error states to improve visibility
+
+2. UX Considerations:
+   - Subtle micro-interactions (button depression, focus states)
+   - Clear visual feedback for all interactive states
+   - Custom focus styles that maintain accessibility while fitting the design
+
+3. Accessibility:
+   - High contrast text meeting WCAG AA standards
+   - Visible focus indicators for keyboard navigation
+   - Appropriately sized touch targets for mobile users
+
+4. Performance:
+   - Hardware-accelerated transitions (transform) for smoother animations
+   - Specific property transitions instead of "all" for better rendering
+*/

@@ -1,5 +1,4 @@
-// src/components/Login/Login.jsx
-import { useState } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import './Login.css';
@@ -11,13 +10,26 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, currentUser } = useAuth();
   
-  const handleSubmit = async (e) => {
+  // Redirect already authenticated users
+  useEffect(() => {
+    if (currentUser) {
+      navigate('/', { replace: true });
+    }
+  }, [currentUser, navigate]);
+  
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     
-    if (!username || !password) {
-      setError('Please enter both username and password');
+    // Field validation
+    if (!username.trim()) {
+      setError('Username is required');
+      return;
+    }
+    
+    if (!password) {
+      setError('Password is required');
       return;
     }
     
@@ -25,24 +37,38 @@ const Login = () => {
       setError('');
       setLoading(true);
       await login(username, password);
-      navigate('/');
+      navigate('/', { replace: true });
     } catch (err) {
-      setError('Failed to login: ' + (err.message || 'Please check your credentials'));
+      // Map error codes to user-friendly messages
+      if (err.code === 'auth/invalid-credential') {
+        setError('Invalid username or password');
+      } else if (err.code === 'auth/too-many-requests') {
+        setError('Too many failed login attempts. Please try again later.');
+      } else {
+        setError(`Authentication failed: ${err.message || 'Please check your credentials'}`);
+      }
+      
+      // Return focus to username field after error
+      document.getElementById('username')?.focus();
     } finally {
       setLoading(false);
     }
-  };
+  }, [username, password, login, navigate]);
   
   return (
-    <div className="login-container">
+    <div className="login-container" data-testid="login-component">
       <h1 className="screen-title">Task Management System</h1>
       
       <div className="login-form">
         <h2>Login to your account</h2>
         
-        {error && <div className="error-message">{error}</div>}
+        {error && (
+          <div className="error-message" role="alert" aria-live="assertive">
+            {error}
+          </div>
+        )}
         
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
           <div className="form-group">
             <label htmlFor="username">Username:</label>
             <input
@@ -51,6 +77,11 @@ const Login = () => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Enter your username"
+              autoComplete="username"
+              disabled={loading}
+              required
+              aria-required="true"
+              data-testid="username-input"
             />
           </div>
           
@@ -62,18 +93,31 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
+              autoComplete="current-password"
+              disabled={loading}
+              required
+              aria-required="true"
+              data-testid="password-input"
             />
           </div>
           
           <div className="form-actions">
-            <button type="submit" className="btn-login" disabled={loading}>
+            <button 
+              type="submit" 
+              className="btn-login" 
+              disabled={loading}
+              aria-busy={loading}
+              data-testid="login-button"
+            >
               {loading ? 'Logging in...' : 'Login'}
             </button>
           </div>
         </form>
         
         <div className="auth-links">
-          <p>Don't have an account? <Link to="/signup">Sign up</Link></p>
+          <p>
+            Don't have an account? <Link to="/signup" data-testid="signup-link">Sign up</Link>
+          </p>
         </div>
       </div>
     </div>
@@ -81,3 +125,27 @@ const Login = () => {
 };
 
 export default Login;
+
+/*
+Design/Coding Choices:
+
+1. Authentication Security:
+   - Field validation occurs before auth attempt to prevent unnecessary API calls
+   - Detailed error handling with specific messages based on error codes
+   - Replace: true in navigation prevents back-button access to login after authentication
+
+2. User Experience:
+   - Disabled form controls during submission prevent duplicate requests
+   - Focus management returns users to the form after errors
+   - Proper loading indicators with text changes on the submit button
+
+3. Accessibility:
+   - ARIA attributes for screen reader support
+   - Live regions for dynamic error announcements
+   - Semantic HTML structure with proper form associations
+
+4. Performance:
+   - Memoized form handler prevents unnecessary recreations
+   - Early returns for validation reduce unnecessary processing
+   - Automatic redirection for authenticated users prevents unnecessary renders
+*/

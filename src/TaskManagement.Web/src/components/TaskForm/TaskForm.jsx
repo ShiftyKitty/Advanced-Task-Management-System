@@ -1,26 +1,32 @@
-// Updated TaskForm.jsx
-import { useState } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { taskService } from '../../services/taskService';
 import './TaskForm.css';
 
 const TaskForm = () => {
   const navigate = useNavigate();
+  
+  // Initialize default date once to avoid recalculation
+  const defaultDate = useMemo(() => 
+    new Date().toISOString().split('T')[0], []
+  );
+  
   const [task, setTask] = useState({
     title: '',
     description: '',
-    priority: 0, // Low by default
-    dueDate: new Date().toISOString().split('T')[0], // Today by default
-    status: 0 // To Do by default
+    priority: 0,
+    dueDate: defaultDate,
+    status: 0
   });
+  
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
 
-    // If changing priority to high (2), show confirmation modal
+    // Prompt confirmation when setting high priority
     if (name === 'priority' && parseInt(value) === 2) {
       setShowModal(true);
     }
@@ -29,51 +35,54 @@ const TaskForm = () => {
       ...prev,
       [name]: name === 'priority' || name === 'status' ? parseInt(value) : value
     }));
-  };
+  }, []);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
 
-    // Validate form
     if (!task.title.trim()) {
       setError('Title is required');
+      document.getElementById('title')?.focus();
       return;
     }
 
     try {
       setLoading(true);
+      setError('');
       await taskService.createTask(task);
       navigate('/');
     } catch (err) {
-      console.error('Failed to create task:', err);
-      setError('Failed to create task. Please try again.');
+      setError(`Failed to create task: ${err.message || 'Please try again'}`);
     } finally {
       setLoading(false);
     }
-  };
+  }, [task, navigate]);
 
-  const handleModalConfirm = () => {
+  const handleModalConfirm = useCallback(() => {
     setShowModal(false);
-    // Priority was already set in handleChange
-  };
+  }, []);
 
-  const handleModalCancel = () => {
+  const handleModalCancel = useCallback(() => {
     setShowModal(false);
     // Revert to medium priority
     setTask(prev => ({
       ...prev,
       priority: 1
     }));
-  };
+  }, []);
 
   return (
     <div className="task-form-container">
       <h1 className="screen-title">Create Task Screen</h1>
 
       <div className="task-create-form">
-        {error && <div className="error-message">{error}</div>}
+        {error && (
+          <div className="error-message" role="alert" aria-live="assertive">
+            {error}
+          </div>
+        )}
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
           <div className="form-group">
             <label htmlFor="title">Title:</label>
             <input
@@ -84,6 +93,8 @@ const TaskForm = () => {
               onChange={handleChange}
               required
               placeholder="Enter task title"
+              aria-required="true"
+              data-testid="task-title-input"
             />
           </div>
 
@@ -96,6 +107,7 @@ const TaskForm = () => {
               onChange={handleChange}
               rows={4}
               placeholder="Describe the task details"
+              data-testid="task-description-input"
             />
           </div>
 
@@ -108,6 +120,7 @@ const TaskForm = () => {
                 value={task.priority}
                 onChange={handleChange}
                 className={`priority-select priority-${task.priority}`}
+                data-testid="task-priority-select"
               >
                 <option value={0}>Low</option>
                 <option value={1}>Medium</option>
@@ -123,6 +136,7 @@ const TaskForm = () => {
                 type="date"
                 value={task.dueDate}
                 onChange={handleChange}
+                data-testid="task-duedate-input"
               />
             </div>
 
@@ -134,6 +148,7 @@ const TaskForm = () => {
                 value={task.status}
                 onChange={handleChange}
                 className={`status-select status-${task.status}`}
+                data-testid="task-status-select"
               >
                 <option value={0}>To Do</option>
                 <option value={1}>In Progress</option>
@@ -149,6 +164,7 @@ const TaskForm = () => {
               className="btn-cancel"
               onClick={() => navigate('/')}
               disabled={loading}
+              data-testid="cancel-button"
             >
               Cancel
             </button>
@@ -156,6 +172,8 @@ const TaskForm = () => {
               type="submit"
               className="btn-create"
               disabled={loading}
+              aria-busy={loading}
+              data-testid="create-button"
             >
               {loading ? 'Creating...' : 'Create Task'}
             </button>
@@ -163,9 +181,8 @@ const TaskForm = () => {
         </form>
       </div>
 
-      {/* High Priority Confirmation Modal */}
       {showModal && (
-        <div className="modal-overlay">
+        <div className="modal-overlay" role="dialog" aria-modal="true">
           <div className="modal">
             <h3>High Priority Confirmation</h3>
             <p>Are you sure you want to set this task to high priority?</p>
@@ -173,12 +190,14 @@ const TaskForm = () => {
               <button
                 className="btn-cancel"
                 onClick={handleModalCancel}
+                data-testid="priority-cancel-button"
               >
                 No, use medium priority
               </button>
               <button
                 className="btn-confirm"
                 onClick={handleModalConfirm}
+                data-testid="priority-confirm-button"
               >
                 Yes, use high priority
               </button>
@@ -191,3 +210,32 @@ const TaskForm = () => {
 };
 
 export default TaskForm;
+
+/*
+Design/Coding Choices:
+
+1. Form Handling:
+   - Memoized default date to prevent recalculation on rerenders
+   - Used controlled form pattern for predictable state management
+   - Implemented specific validation with focus management
+
+2. User Experience:
+   - Confirmation modal for high-impact actions (setting high priority)
+   - Clear loading states with disabled controls
+   - Form validation with focused error messages
+
+3. Performance:
+   - Memoized event handlers with useCallback to prevent unnecessary rerenders
+   - Controlled form updates with targeted state changes
+   - Early returns for validation failures
+
+4. Accessibility:
+   - ARIA attributes for dynamic content and modal dialogs
+   - Error message announcements with live regions
+   - Form controls properly labeled and associated
+
+5. Maintainability:
+   - Clean separation between UI, state management, and event handling
+   - Consistent error handling pattern
+   - Test IDs for automated testing coverage
+*/
