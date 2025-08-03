@@ -20,7 +20,7 @@ The Advanced Task Management System is a comprehensive task management solution 
 
 Even though it's overkill to go into this depth for a smaller project, I always find it important to have structure and plan before coding. We code and build for commercial purposes. This template I developed helps keep things on track and commercially focused, concentrating on why users would use this rather than why I would build this.
 
-[View Full Commercial Analysis Document](/docs/pdfs/task_management_app.pdf)
+[📄 VIEW FULL COMMERCIAL ANALYSIS DOCUMENT 📄](/docs/pdfs/task_management_app.pdf)
 
 ![Commercial Analysis Template](/docs/images/task_management_app.jpg)
 
