@@ -1,28 +1,28 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
-// ===== MOCK SERVICES AND DEPENDENCIES =====
+// MOCK SERVICES AND DEPENDENCIES 
 const mockGetTasks = jest.fn();
 const mockNavigate = jest.fn();
 const MockLink = ({ to, children, ...props }) => <a href={to} {...props}>{children}</a>;
 
-// Minimal TaskStats (just renders how many tasks)
+// Minimal TaskStats 
 const MockTaskStats = ({ tasks }) => <div data-testid="task-stats">{tasks.length} stats</div>;
 
-// --- MOCK react-router-dom ---
+//MOCK react-router-dom
 jest.mock('react-router-dom', () => ({
   Link: (props) => <MockLink {...props} />,
   useNavigate: () => mockNavigate,
 }));
 
-// --- MOCK service layer ---
+// MOCK service layer 
 jest.mock('../../../../src/TaskManagement.Web/src/services/taskService', () => ({
   taskService: {
     getTasks: (...args) => mockGetTasks(...args),
   }
 }));
 
-// ===== MINIMAL TASKLIST LOGIC (same as before, just MockLink not mockLink) =====
+// MINIMAL TASKLIST LOGIC 
 function TaskList() {
   const [tasks, setTasks] = React.useState([]);
   const [filteredTasks, setFilteredTasks] = React.useState([]);
@@ -53,7 +53,6 @@ function TaskList() {
       }
     };
     fetchTasks();
-    // eslint-disable-next-line
   }, []);
 
   React.useEffect(() => {
@@ -201,7 +200,7 @@ function TaskList() {
   );
 }
 
-// ===== MOCK DATA =====
+// MOCK DATA 
 const today = new Date();
 const iso = d => new Date(d).toISOString().split('T')[0];
 const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1);
@@ -214,7 +213,7 @@ const sampleTasks = [
   { id: 4, title: 'Archive Me', description: '', dueDate: iso(today), priority: 1, status: 3, userName: 'Carl' }
 ];
 
-// ===== TESTS =====
+// TESTS 
 describe('TaskList Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();

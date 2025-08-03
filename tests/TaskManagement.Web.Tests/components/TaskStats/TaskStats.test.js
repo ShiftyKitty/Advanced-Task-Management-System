@@ -1,7 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 
-// DO NOT import './TaskStats.css' or actual TaskStats
 // Contract/mock TaskStats as a minimal pure functional component
 const TaskStats = ({ tasks }) => {
   // Helper calculations for contract

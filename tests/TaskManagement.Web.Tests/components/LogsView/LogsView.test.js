@@ -1,4 +1,3 @@
-// tests/TaskManagement.Web.Tests/components/LogsView/LogsView.test.js
 import React from 'react';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 

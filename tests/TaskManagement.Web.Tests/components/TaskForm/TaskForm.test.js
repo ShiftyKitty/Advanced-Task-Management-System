@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
-// --- Mocks ---
+// Mocks
 const mockNavigate = jest.fn();
 const mockCreateTask = jest.fn();
 
@@ -16,7 +16,7 @@ jest.mock('../../../../src/TaskManagement.Web/src/services/taskService', () => (
     }
 }));
 
-// --- Minimal Inline Copy ---
+// Minimal Inline Copy of TaskForm Component
 function TaskForm() {
     const navigate = mockNavigate;
     const [task, setTask] = React.useState({
@@ -135,7 +135,7 @@ function TaskForm() {
     );
 }
 
-// --- TESTS ---
+// Tests
 describe('TaskForm Component', () => {
     beforeEach(() => {
         jest.clearAllMocks();
