@@ -6,151 +6,152 @@ import { AuthContext } from '../../../../src/TaskManagement.Web/src/contexts/Aut
 
 // Mock react-router-dom
 jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useLocation: () => ({ pathname: '/' }),
-  useNavigate: () => jest.fn()
+    useLocation: () => ({ pathname: '/' }),
+    useNavigate: () => jest.fn(),
+    Link: ({ children, to }) => <a href={to}>{children}</a>,
+    MemoryRouter: ({ children }) => <div>{children}</div>
 }));
 
 // Mock the useAuth hook
 jest.mock('../../../../src/TaskManagement.Web/src/contexts/AuthContext', () => ({
-  useAuth: jest.fn()
+    useAuth: jest.fn()
 }));
 
 describe('Header Component', () => {
-  // Setup for different user scenarios
-  const setupRegularUser = () => {
-    // Mock implementation for a regular user
-    require('../../../../src/TaskManagement.Web/src/contexts/AuthContext').useAuth.mockReturnValue({
-      currentUser: { username: 'regularUser' },
-      isAdmin: false,
-      logout: jest.fn()
+    // Setup for different user scenarios
+    const setupRegularUser = () => {
+        // Mock implementation for a regular user
+        require('../../../../src/TaskManagement.Web/src/contexts/AuthContext').useAuth.mockReturnValue({
+            currentUser: { username: 'regularUser' },
+            isAdmin: false,
+            logout: jest.fn()
+        });
+    };
+
+    const setupAdminUser = () => {
+        // Mock implementation for an admin user
+        require('../../../../src/TaskManagement.Web/src/contexts/AuthContext').useAuth.mockReturnValue({
+            currentUser: { username: 'adminUser' },
+            isAdmin: true,
+            logout: jest.fn()
+        });
+    };
+
+    const setupNoUser = () => {
+        // Mock implementation for no user logged in
+        require('../../../../src/TaskManagement.Web/src/contexts/AuthContext').useAuth.mockReturnValue({
+            currentUser: null,
+            isAdmin: false,
+            logout: jest.fn()
+        });
+    };
+
+    test('renders the header with application title', () => {
+        setupRegularUser();
+
+        render(
+            <MemoryRouter>
+                <Header />
+            </MemoryRouter>
+        );
+
+        expect(screen.getByText('Task Management System')).toBeInTheDocument();
     });
-  };
 
-  const setupAdminUser = () => {
-    // Mock implementation for an admin user
-    require('../../../../src/TaskManagement.Web/src/contexts/AuthContext').useAuth.mockReturnValue({
-      currentUser: { username: 'adminUser' },
-      isAdmin: true,
-      logout: jest.fn()
+    test('displays username when user is logged in', () => {
+        setupRegularUser();
+
+        render(
+            <MemoryRouter>
+                <Header />
+            </MemoryRouter>
+        );
+
+        expect(screen.getByText('regularUser')).toBeInTheDocument();
     });
-  };
 
-  const setupNoUser = () => {
-    // Mock implementation for no user logged in
-    require('../../../../src/TaskManagement.Web/src/contexts/AuthContext').useAuth.mockReturnValue({
-      currentUser: null,
-      isAdmin: false,
-      logout: jest.fn()
+    test('shows standard navigation links for regular users', () => {
+        setupRegularUser();
+
+        render(
+            <MemoryRouter>
+                <Header />
+            </MemoryRouter>
+        );
+
+        expect(screen.getByText('My Tasks')).toBeInTheDocument();
+        expect(screen.getByText('Add Task')).toBeInTheDocument();
+        expect(screen.queryByText('Logs/Audit Trail')).not.toBeInTheDocument();
     });
-  };
 
-  test('renders the header with application title', () => {
-    setupRegularUser();
-    
-    render(
-      <MemoryRouter>
-        <Header />
-      </MemoryRouter>
-    );
-    
-    expect(screen.getByText('Task Management System')).toBeInTheDocument();
-  });
+    test('shows admin links when user is an admin', () => {
+        setupAdminUser();
 
-  test('displays username when user is logged in', () => {
-    setupRegularUser();
-    
-    render(
-      <MemoryRouter>
-        <Header />
-      </MemoryRouter>
-    );
-    
-    expect(screen.getByText('regularUser')).toBeInTheDocument();
-  });
+        render(
+            <MemoryRouter>
+                <Header />
+            </MemoryRouter>
+        );
 
-  test('shows standard navigation links for regular users', () => {
-    setupRegularUser();
-    
-    render(
-      <MemoryRouter>
-        <Header />
-      </MemoryRouter>
-    );
-    
-    expect(screen.getByText('My Tasks')).toBeInTheDocument();
-    expect(screen.getByText('Add Task')).toBeInTheDocument();
-    expect(screen.queryByText('Logs/Audit Trail')).not.toBeInTheDocument();
-  });
+        expect(screen.getByText('My Tasks')).toBeInTheDocument();
+        expect(screen.getByText('Add Task')).toBeInTheDocument();
+        expect(screen.getByText('Logs/Audit Trail')).toBeInTheDocument();
+    });
 
-  test('shows admin links when user is an admin', () => {
-    setupAdminUser();
-    
-    render(
-      <MemoryRouter>
-        <Header />
-      </MemoryRouter>
-    );
-    
-    expect(screen.getByText('My Tasks')).toBeInTheDocument();
-    expect(screen.getByText('Add Task')).toBeInTheDocument();
-    expect(screen.getByText('Logs/Audit Trail')).toBeInTheDocument();
-  });
+    test('calls logout function when logout button is clicked', () => {
+        setupRegularUser();
+        const mockLogout = require('../../../../src/TaskManagement.Web/src/contexts/AuthContext').useAuth().logout;
 
-  test('calls logout function when logout button is clicked', () => {
-    setupRegularUser();
-    const mockLogout = require('../../../../src/TaskManagement.Web/src/contexts/AuthContext').useAuth().logout;
-    
-    render(
-      <MemoryRouter>
-        <Header />
-      </MemoryRouter>
-    );
-    
-    const logoutButton = screen.getByText('Logout');
-    fireEvent.click(logoutButton);
-    
-    expect(mockLogout).toHaveBeenCalled();
-  });
+        render(
+            <MemoryRouter>
+                <Header />
+            </MemoryRouter>
+        );
 
-  test('applies active class to current route', () => {
-    setupRegularUser();
-    
-    // Mock useLocation to return a specific path
-    require('react-router-dom').useLocation.mockReturnValue({ pathname: '/create' });
-    
-    render(
-      <MemoryRouter initialEntries={['/create']}>
-        <Header />
-      </MemoryRouter>
-    );
-    
-    // Get all list items
-    const listItems = screen.getAllByRole('listitem');
-    
-    // The "Add Task" link should have the active class
-    const addTaskItem = listItems.find(item => item.textContent === 'Add Task');
-    expect(addTaskItem).toHaveClass('active');
-    
-    // The "My Tasks" link should not have the active class
-    const myTasksItem = listItems.find(item => item.textContent === 'My Tasks');
-    expect(myTasksItem).not.toHaveClass('active');
-  });
+        const logoutButton = screen.getByText('Logout');
+        fireEvent.click(logoutButton);
 
-  test('handles case when no user is logged in', () => {
-    setupNoUser();
-    
-    render(
-      <MemoryRouter>
-        <Header />
-      </MemoryRouter>
-    );
-    
-    // No username should be displayed
-    expect(screen.queryByText(/regularUser/)).not.toBeInTheDocument();
-    expect(screen.queryByText(/adminUser/)).not.toBeInTheDocument();
-    
-    // But the logout button should still be there
-    expect(screen.getByText('Logout')).toBeInTheDocument();
-  });
+        expect(mockLogout).toHaveBeenCalled();
+    });
+
+    test('applies active class to current route', () => {
+        setupRegularUser();
+
+        // Mock useLocation to return a specific path
+        require('react-router-dom').useLocation.mockReturnValue({ pathname: '/create' });
+
+        render(
+            <MemoryRouter initialEntries={['/create']}>
+                <Header />
+            </MemoryRouter>
+        );
+
+        // Get all list items
+        const listItems = screen.getAllByRole('listitem');
+
+        // The "Add Task" link should have the active class
+        const addTaskItem = listItems.find(item => item.textContent === 'Add Task');
+        expect(addTaskItem).toHaveClass('active');
+
+        // The "My Tasks" link should not have the active class
+        const myTasksItem = listItems.find(item => item.textContent === 'My Tasks');
+        expect(myTasksItem).not.toHaveClass('active');
+    });
+
+    test('handles case when no user is logged in', () => {
+        setupNoUser();
+
+        render(
+            <MemoryRouter>
+                <Header />
+            </MemoryRouter>
+        );
+
+        // No username should be displayed
+        expect(screen.queryByText(/regularUser/)).not.toBeInTheDocument();
+        expect(screen.queryByText(/adminUser/)).not.toBeInTheDocument();
+
+        // But the logout button should still be there
+        expect(screen.getByText('Logout')).toBeInTheDocument();
+    });
 });
