@@ -111,8 +111,7 @@ The application comes with pre-configured user accounts for testing:
 - React 18
 - Vite
 - React Router
-- Axios
-- Chart.js (for visualizations)
+- Recharts
 - Jest, React Testing Library
 
 ### What I Would Do Differently
@@ -197,7 +196,7 @@ If I were to continue developing this project, I would prioritize the following 
 - **Advanced Filtering**: Implement more sophisticated task search and filtering capabilities
 
 ### UI/UX Improvements
-- **Enhanced Design System**: Create a more polished, consistent UI with improved responsive behavior
+- **Enhanced Design System**: Create a more polished, consistent UI with improved responsive behaviour
 - **Accessibility Compliance**: Ensure the application meets WCAG standards for accessibility
 - **Mobile Optimization**: Better support for mobile devices with touch-friendly interfaces
 
@@ -276,7 +275,7 @@ public async Task GetHighPriorityLogs_AsAdmin_ReturnsOnlyHighPriorityLogs()
 - **Framework**: Jest as the core JavaScript testing framework
 - **Component Testing**: React Testing Library for rendering and interacting with components
 - **DOM Assertions**: @testing-library/jest-dom for enhanced DOM-related assertions
-- **Environment**: jest-environment-jsdom for simulating browser behavior
+- **Environment**: jest-environment-jsdom for simulating browser behaviour
 
 Example frontend test:
 ```javascript
@@ -293,7 +292,7 @@ test('displays logs when fetch is successful', async () => {
 });
 ```
 
-The frontend testing approach focuses on behavior rather than implementation details, resulting in tests that are more robust and less susceptible to breaking when implementation changes occur while maintaining the same functionality.
+The frontend testing approach focuses on behaviour rather than implementation details, resulting in tests that are more robust and less susceptible to breaking when implementation changes occur while maintaining the same functionality.
 
 ## Difficulties and Challenges
 
@@ -307,7 +306,7 @@ Several technical challenges were encountered during development. Documenting th
 
 ### Testing Challenges
 
-- **Frontend Component Testing**: Testing React components proved challenging due to the tight coupling between component implementation and tests. Pivoting to a behavior-based testing approach using React Testing Library led to more maintainable tests that focus on functionality rather than implementation details.
+- **Frontend Component Testing**: Testing React components proved challenging due to the tight coupling between component implementation and tests. Pivoting to a behaviour-based testing approach using React Testing Library led to more maintainable tests that focus on functionality rather than implementation details.
 
 - **JWT Testing**: Verifying token expiration required patience and special test cases. Tests were developed to validate the 60-minute token expiration by manipulating the system clock in test environments.
 
