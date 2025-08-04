@@ -50,7 +50,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// Configure API behavior options to handle validation errors
+// Configure API behaviour options to handle validation errors
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;
