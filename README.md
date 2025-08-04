@@ -38,7 +38,7 @@ TaskManagementSystem/
 
 ## Commercial Approach
 
-Even though it's overkill to go into this depth for a smaller project, I always find it important to have structure and plan before coding. We code and build for commercial purposes. This template I developed helps keep things on track and commercially focused, concentrating on why users would use this rather than why I would build this.
+Even though it's overkill to go into this depth for a smaller project, I always find it important to have structure and plan before coding. We code and build for commercial purposes. This custom template I developed helps keep things on track and commercially focused, concentrating on why users would use this rather than why I would build this.
 
 ### 📄 [VIEW FULL COMMERCIAL ANALYSIS DOCUMENT](/docs/pdfs/task_management_app.pdf) 📄
 
@@ -355,7 +355,7 @@ The frontend testing approach focuses on behaviour rather than implementation de
 
 ## Difficulties and Challenges
 
-Several technical challenges were encountered during development. Documenting these challenges and their solutions provides insight into the problem-solving approach taken throughout the project.
+Several technical challenges were encountered during development. Below is a brief account of these:
 
 ### Development Environment
 
@@ -373,7 +373,7 @@ Several technical challenges were encountered during development. Documenting th
 
 ### Implementation Challenges
 
-- **Custom Middleware Development**: Implementing the logging middleware that captures API requests required deep understanding of ASP.NET Core's request pipeline. Particular attention was needed to ensure the request body could be read without interfering with subsequent middleware components.
+- **Custom Middleware Development**: Implementing the logging middleware that captures API requests required deep understanding of ASP.NET Core's request pipeline. Particular attention was needed to ensure the request body could be read without interfering with subsequent middleware components. Rather than just writing logs to a file, I created a structured LogEntry model to store logs in the database, enabling them to be queried, filtered, and displayed in the admin dashboard.
 
 - **High Priority Task Event Logging**: Implementing the event-driven logging for high-priority tasks required establishing a clean separation between the task creation/update logic and the logging system. This was addressed using a publisher-subscriber pattern.
 
