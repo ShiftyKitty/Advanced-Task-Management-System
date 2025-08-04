@@ -104,7 +104,7 @@ function TaskForm() {
                     value={task.status}
                     onChange={handleChange}
                 >
-                    <option value={0}>To Do</option>
+                    <option value={0}>Pending</option>
                     <option value={1}>In Progress</option>
                     <option value={2}>Completed</option>
                     <option value={3}>Archived</option>

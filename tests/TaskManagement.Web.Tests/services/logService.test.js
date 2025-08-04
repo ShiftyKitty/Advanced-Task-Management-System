@@ -26,7 +26,7 @@ describe('logService', () => {
       
       // Assert
       expect(result).toEqual(mockLogs);
-      expect(fetch).toHaveBeenCalledWith('/api/logs', expect.any(Object));
+      expect(fetch).toHaveBeenCalledWith('http://localhost:5271/api/logs', expect.any(Object));
     });
 
     it('calls /highpriority endpoint when filter is high', async () => {
@@ -41,7 +41,7 @@ describe('logService', () => {
       const result = await logService.getLogs({ priority: 'high' });
       
       // Assert
-      expect(fetch).toHaveBeenCalledWith('/api/logs/highpriority', expect.any(Object));
+      expect(fetch).toHaveBeenCalledWith('http://localhost:5271/api/logs/highpriority', expect.any(Object));
       expect(result).toEqual(mockLogs);
     });
 
@@ -64,7 +64,7 @@ describe('logService', () => {
 
       // Assert
       expect(fetch).toHaveBeenCalledWith(
-        '/api/logs/daterange?start=2025-08-01&end=2025-08-02',
+        'http://localhost:5271/api/logs/daterange?start=2025-08-01&end=2025-08-02',
         expect.any(Object)
       );
       expect(result).toEqual(mockLogs);
@@ -122,7 +122,7 @@ describe('logService', () => {
       const result = await logService.exportLogs();
       
       // Assert
-      expect(fetch).toHaveBeenCalledWith('/api/logs/export', expect.any(Object));
+      expect(fetch).toHaveBeenCalledWith('http://localhost:5271/api/logs/export', expect.any(Object));
       expect(clickSpy).toHaveBeenCalled();
       expect(global.URL.createObjectURL).toHaveBeenCalledWith(mockBlob);
       expect(result).toBe(true);
@@ -161,7 +161,7 @@ describe('logService', () => {
       
       // Assert - Verify Authorization header is correctly set
       expect(fetch).toHaveBeenCalledWith(
-        '/api/logs',
+        'http://localhost:5271/api/logs',
         expect.objectContaining({
           headers: expect.objectContaining({ 
             Authorization: 'Bearer ABC' 

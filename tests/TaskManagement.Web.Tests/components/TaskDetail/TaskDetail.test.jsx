@@ -114,7 +114,7 @@ function TaskDetail({ isEditing = false }) {
   const getPriorityLabel = (priority) =>
     priority === 0 ? 'LOW' : priority === 1 ? 'MEDIUM' : 'HIGH';
   const getStatusLabel = (status) =>
-    status === 0 ? 'TO DO' : status === 1 ? 'IN PROGRESS' : status === 2 ? 'COMPLETED' : 'ARCHIVED';
+    status === 0 ? 'PENDING' : status === 1 ? 'IN PROGRESS' : status === 2 ? 'COMPLETED' : 'ARCHIVED';
   const isOverdue = (dueDate) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -167,7 +167,7 @@ function TaskDetail({ isEditing = false }) {
             value={editedTask.status}
             onChange={handleChange}
           >
-            <option value={0}>To Do</option>
+            <option value={0}>Pending</option>
             <option value={1}>In Progress</option>
             <option value={2}>Completed</option>
             <option value={3}>Archived</option>
@@ -270,7 +270,7 @@ describe('TaskDetail Component', () => {
     });
     await waitFor(() => expect(screen.getByTestId('task-title')).toHaveTextContent('Fix critical bug'));
     expect(screen.getByTestId('priority-badge')).toHaveTextContent('MEDIUM');
-    expect(screen.getByTestId('status-badge')).toHaveTextContent('TO DO');
+    expect(screen.getByTestId('status-badge')).toHaveTextContent('PENDING');
     expect(screen.getByTestId('due-date')).toBeInTheDocument();
     expect(screen.getByTestId('task-owner')).toHaveTextContent('john_dev');
     expect(screen.getByTestId('task-desc')).toHaveTextContent('There is a bug in the reporting module.');

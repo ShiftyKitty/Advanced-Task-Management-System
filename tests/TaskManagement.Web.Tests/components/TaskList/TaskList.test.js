@@ -149,7 +149,7 @@ function TaskList() {
         </select>
         <select data-testid="status-select" name="status" onChange={handleFilterChange} value={filters.status}>
           <option value="All">Status: All</option>
-          <option value="0">To Do</option>
+          <option value="0">Pending</option>
           <option value="1">In Progress</option>
           <option value="2">Completed</option>
           {(filters.showArchived || filters.filter === 'Archived') && <option value="3">Archived</option>}
@@ -161,7 +161,7 @@ function TaskList() {
           <option value="priority-desc">Sort: Priority (high to low)</option>
           <option value="title-asc">Sort: Title (A-Z)</option>
           <option value="title-desc">Sort: Title (Z-A)</option>
-          <option value="status-asc">Sort: Status (to do first)</option>
+          <option value="status-asc">Sort: Status (pending first)</option>
           <option value="created-desc">Sort: Recently Created</option>
           <option value="created-asc">Sort: Oldest Created</option>
         </select>
@@ -178,7 +178,7 @@ function TaskList() {
             <div key={task.id} data-testid={`task-${task.id}`}>
               <span data-testid="task-title">{task.title}</span>
               <span data-testid="task-priority">{['LOW','MEDIUM','HIGH'][task.priority]}</span>
-              <span data-testid="task-status">{['TO DO','IN PROGRESS','COMPLETED','ARCHIVED'][task.status]}</span>
+              <span data-testid="task-status">{['PENDING','IN PROGRESS','COMPLETED','ARCHIVED'][task.status]}</span>
               <span data-testid="task-dueDate">{formatDate(task.dueDate)}</span>
               {task.userName && <span data-testid="task-owner">{task.userName}</span>}
             </div>
@@ -200,24 +200,45 @@ function TaskList() {
   );
 }
 
-// MOCK DATA 
-const today = new Date();
+// MOCK DATA - WITH FIXED DATES FOR TESTING
+const mockToday = new Date('2025-08-03T12:00:00Z'); // Fixed date for consistent tests
 const iso = d => new Date(d).toISOString().split('T')[0];
-const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1);
-const nextWeek = new Date(today); nextWeek.setDate(today.getDate() + 7);
+const mockYesterday = new Date(mockToday); mockYesterday.setDate(mockToday.getDate() - 1);
+const mockNextWeek = new Date(mockToday); mockNextWeek.setDate(mockToday.getDate() + 7);
 
 const sampleTasks = [
-  { id: 1, title: 'Do Laundry', description: 'desc', dueDate: iso(today), priority: 0, status: 0, userName: 'Anna' },
-  { id: 2, title: 'Finish Report', description: '', dueDate: iso(nextWeek), priority: 2, status: 1, userName: 'Bob' },
-  { id: 3, title: 'Fix Bug', description: '', dueDate: iso(yesterday), priority: 1, status: 0, userName: 'Anna' },
-  { id: 4, title: 'Archive Me', description: '', dueDate: iso(today), priority: 1, status: 3, userName: 'Carl' }
+  { id: 1, title: 'Do Laundry', description: 'desc', dueDate: iso(mockToday), priority: 0, status: 0, userName: 'Anna' },
+  { id: 2, title: 'Finish Report', description: '', dueDate: iso(mockNextWeek), priority: 2, status: 1, userName: 'Bob' },
+  { id: 3, title: 'Fix Bug', description: '', dueDate: iso(mockYesterday), priority: 1, status: 0, userName: 'Anna' },
+  { id: 4, title: 'Archive Me', description: '', dueDate: iso(mockToday), priority: 1, status: 3, userName: 'Carl' }
 ];
 
 // TESTS 
 describe('TaskList Component', () => {
+  let originalDate;
+  
   beforeEach(() => {
     jest.clearAllMocks();
     mockGetTasks.mockResolvedValue(sampleTasks);
+    
+    // Mock Date to return a fixed date for consistent testing
+    originalDate = global.Date;
+    global.Date = class extends Date {
+      constructor(date) {
+        if (date) {
+          return super(date);
+        }
+        return new originalDate(mockToday); // Always return our fixed test date
+      }
+      static now() {
+        return mockToday.getTime();
+      }
+    };
+  });
+  
+  afterEach(() => {
+    // Restore original Date
+    global.Date = originalDate;
   });
 
   test('renders loading and then task list', async () => {
@@ -247,18 +268,30 @@ describe('TaskList Component', () => {
     render(<TaskList />);
     await waitFor(() => expect(screen.getByTestId('task-1')).toBeInTheDocument());
     fireEvent.change(screen.getByTestId('filter-select'), { target: { name: 'filter', value: 'Today' } });
-    // Only tasks due today and not archived
-    expect(screen.getByTestId('task-1')).toBeInTheDocument();
-    expect(screen.queryByTestId('task-2')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('task-4')).not.toBeInTheDocument();
+    
+    // Add a small delay to allow for state updates
+    await waitFor(() => {
+      // Only tasks due today and not archived should be visible
+      expect(screen.getByTestId('task-1')).toBeInTheDocument();
+      expect(screen.queryByTestId('task-2')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('task-3')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('task-4')).not.toBeInTheDocument();
+    });
   });
 
   test('filters by Overdue', async () => {
     render(<TaskList />);
     await waitFor(() => expect(screen.getByTestId('task-3')).toBeInTheDocument());
     fireEvent.change(screen.getByTestId('filter-select'), { target: { name: 'filter', value: 'Overdue' } });
-    expect(screen.getByTestId('task-3')).toBeInTheDocument();
-    expect(screen.queryByTestId('task-1')).not.toBeInTheDocument();
+    
+    // Add a small delay to allow for state updates
+    await waitFor(() => {
+      // Only overdue tasks should be visible (task-3, which is from yesterday)
+      expect(screen.getByTestId('task-3')).toBeInTheDocument();
+      expect(screen.queryByTestId('task-1')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('task-2')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('task-4')).not.toBeInTheDocument();
+    });
   });
 
   test('filters by priority', async () => {

@@ -1,10 +1,32 @@
 import { authService } from '../../../src/TaskManagement.Web/src/services/authService.js';
 
 describe('authService', () => {
-  // Mock setup and teardown
+  // Simple localStorage mock
+  let mockStorage = {};
+  
   beforeEach(() => {
+    // Reset mock storage
+    mockStorage = {};
+    
+    // Mock fetch
     global.fetch = jest.fn();
-    localStorage.clear();
+    
+    // Mock localStorage with simple implementation
+    Object.defineProperty(window, 'localStorage', {
+      value: {
+        getItem: jest.fn(key => mockStorage[key] || null),
+        setItem: jest.fn((key, value) => {
+          mockStorage[key] = String(value);
+        }),
+        removeItem: jest.fn(key => {
+          delete mockStorage[key];
+        }),
+        clear: jest.fn(() => {
+          mockStorage = {};
+        })
+      },
+      writable: true
+    });
   });
 
   afterEach(() => {
@@ -27,7 +49,7 @@ describe('authService', () => {
       expect(result).toEqual(fakeUser);
       expect(localStorage.getItem('user')).toBe(JSON.stringify(fakeUser));
       expect(fetch).toHaveBeenCalledWith(
-        '/api/auth/login',
+        'http://localhost:5271/api/auth/login',
         expect.objectContaining({
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -69,7 +91,7 @@ describe('authService', () => {
       expect(result).toEqual(fakeUser);
       expect(localStorage.getItem('user')).toBe(JSON.stringify(fakeUser));
       expect(fetch).toHaveBeenCalledWith(
-        '/api/auth/register',
+        'http://localhost:5271/api/auth/register',
         expect.objectContaining({
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -133,21 +155,24 @@ describe('authService', () => {
 
   describe('isAuthenticated', () => {
     it('returns true if user present', () => {
-      // Arrange
-      localStorage.setItem('user', JSON.stringify({ x: 2 }));
+      // Important: The user needs to have a token property for isAuthenticated to return true
+      localStorage.setItem('user', JSON.stringify({ username: 'test', token: 'abc123' }));
       
       // Act & Assert
       expect(authService.isAuthenticated()).toBe(true);
     });
 
     it('returns false if no user', () => {
+      // Ensure no user in storage
+      localStorage.removeItem('user');
+      
       expect(authService.isAuthenticated()).toBe(false);
     });
   });
 
   describe('isAdmin', () => {
     it('returns true if user role is Admin', () => {
-      // Arrange
+      // Arrange with Admin role
       localStorage.setItem('user', JSON.stringify({ role: 'Admin' }));
       
       // Act & Assert

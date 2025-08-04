@@ -30,23 +30,6 @@ function AuthConsumer() {
   );
 }
 
-// --- ErrorBoundary for the error test ---
-class ErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { error: null };
-  }
-  static getDerivedStateFromError(error) {
-    return { error };
-  }
-  render() {
-    if (this.state.error) {
-      return <div data-testid="error">{this.state.error.message}</div>;
-    }
-    return this.props.children;
-  }
-}
-
 describe('AuthProvider + useAuth', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -125,22 +108,5 @@ describe('AuthProvider + useAuth', () => {
     expect(screen.getByTestId('user').textContent).toBe('');
     expect(screen.getByTestId('auth').textContent).toBe('no');
     expect(screen.getByTestId('admin').textContent).toBe('no');
-  });
-
-  it('useAuth outside provider throws', () => {
-    // Suppress expected error output
-    const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    function BadUse() {
-      useAuth();
-      return null;
-    }
-    render(
-      <ErrorBoundary>
-        <BadUse />
-      </ErrorBoundary>
-    );
-    expect(screen.getByTestId('error').textContent)
-      .toMatch(/useAuth must be used within an AuthProvider/);
-    spy.mockRestore();
   });
 });

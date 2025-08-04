@@ -158,7 +158,7 @@ describe('Signup Component', () => {
   // Modified email validation test to skip the validation check
   test('shows validation error for invalid email format', () => {
     // Instead of testing the exact validation, let's test that register is not called 
-    // with an invalid email - this is the important behavior
+    // with an invalid email - this is the important behaviour
     render(<Signup />);
     
     // Fill in form with invalid email
