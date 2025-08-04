@@ -80,7 +80,7 @@ The development process followed a structured methodology to ensure commercial v
    ```bash
    cd src/TaskManagement.Web
    npm install
-   npm run start
+   npm run dev
    ```
    The frontend will be available at `http://localhost:3000`
 
