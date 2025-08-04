@@ -117,7 +117,7 @@ const TaskDetail = ({ isEditing = false }) => {
   }, []);
 
   const getStatusLabel = useCallback((status) => {
-    return status === 0 ? 'TO DO' : 
+    return status === 0 ? 'PENDING' : 
            status === 1 ? 'IN PROGRESS' : 
            status === 2 ? 'COMPLETED' : 'ARCHIVED';
   }, []);
@@ -222,7 +222,7 @@ const TaskDetail = ({ isEditing = false }) => {
                   className={`status-select status-${editedTask.status}`}
                   data-testid="task-status-select"
                 >
-                  <option value={0}>To Do</option>
+                  <option value={0}>Pending</option>
                   <option value={1}>In Progress</option>
                   <option value={2}>Completed</option>
                   <option value={3}>Archived</option>
@@ -381,32 +381,3 @@ const TaskDetail = ({ isEditing = false }) => {
 };
 
 export default TaskDetail;
-
-/*
-Design/Coding Choices:
-
-1. Component Reusability:
-   - Dual-purpose component that handles both viewing and editing
-   - Conditional rendering based on isEditing prop
-   - Preserves ownership during updates for data integrity
-
-2. State Management:
-   - Separate task and editedTask states to prevent corrupting original data
-   - Optimized rerenders with useCallback for event handlers
-   - Protected against race conditions in async operations
-
-3. UX Considerations:
-   - Confirmation modals for destructive/impactful actions
-   - Visual indicators for task priority and status
-   - Special handling for overdue tasks
-   - Form validation with specific error messages
-
-4. Accessibility:
-   - Semantic HTML and ARIA attributes for modals
-   - Proper labeling of form controls
-   - Live regions for dynamic content
-
-5. Performance:
-   - Memoized utility functions to prevent unnecessary recalculations
-   - Optimized rendering with conditional early returns
-*/

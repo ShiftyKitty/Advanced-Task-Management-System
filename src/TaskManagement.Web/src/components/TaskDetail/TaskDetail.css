@@ -342,32 +342,3 @@ button:active:not(:disabled) {
     width: 100%;
   }
 }
-
-/* 
-Design/Coding Choices:
-
-1. Visual Semantics:
-   - Color-coded priorities and statuses for intuitive recognition
-   - Consistent element styling between view and edit modes
-   - Strong visual indicators for overdue tasks and destructive actions
-
-2. Layout Strategy:
-   - Shared card styling for consistent visual hierarchy
-   - Form layout optimized for quick scanning and completion
-   - Conditional interactive elements based on context
-
-3. Responsive Approach:
-   - Single-column layouts on mobile for better touch targets
-   - Full-width buttons on smaller screens for better accessibility
-   - Flexible form groups that adapt to available space
-
-4. Interaction Design:
-   - Subtle animations for button interactions
-   - Modal dialogs for important confirmations
-   - Clear visual distinction between different action types
-
-5. Maintainability:
-   - Grouped related selectors to reduce repetition
-   - Consistent color palette derived from Material Design
-   - Property ordering from layout to appearance to behavior
-*/

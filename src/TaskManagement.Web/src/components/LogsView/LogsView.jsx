@@ -384,31 +384,3 @@ const LogsView = () => {
 };
 
 export default LogsView;
-
-/*
-Design/Coding Choices:
-
-1. Performance:
-   - Virtualized rendering with lazy loading to handle large datasets efficiently
-   - Memoized expensive operations and handlers to prevent unnecessary rerenders
-   - Split filtering between server and client for optimized data transfer
-
-2. User Experience:
-   - Progressive loading with visual feedback during scroll operations
-   - Quick-access filter presets for common viewing patterns
-   - Consistent error handling with recovery options
-
-3. State Management:
-   - Multi-tiered data management (raw/filtered/visible) for efficient rendering
-   - Normalized user data to handle edge cases with login attempts
-
-4. Accessibility:
-   - ARIA attributes for dynamic content and loading states
-   - Keyboard navigation support for all interactive elements
-   - Live regions for status announcements
-
-5. Maintainability:
-   - Modular approach to filtering and event handling
-   - Defensive coding with fallbacks for error cases
-   - Consistent data transformation patterns
-*/

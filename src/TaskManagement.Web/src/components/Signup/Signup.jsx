@@ -181,27 +181,3 @@ const Signup = () => {
 };
 
 export default Signup;
-
-/*
-Design/Coding Choices:
-
-1. Validation Strategy:
-   - Field-specific validation with targeted error messages
-   - Focus management returns users to problematic fields
-   - Early returns prevent unnecessary validation checks
-
-2. Security:
-   - Input sanitization with trim() to prevent whitespace attacks
-   - Proper autocomplete attributes for password managers
-   - Specific error handling for auth-related failures
-
-3. User Experience:
-   - Form state preserved during validation errors
-   - Clear loading indicators during async operations
-   - Navigates with replace to prevent back-button issues
-
-4. Accessibility:
-   - ARIA attributes for required fields and error announcements
-   - Form validation with proper focus management
-   - Semantic HTML structure with proper labeling
-*/

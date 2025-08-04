@@ -125,27 +125,3 @@ const Login = () => {
 };
 
 export default Login;
-
-/*
-Design/Coding Choices:
-
-1. Authentication Security:
-   - Field validation occurs before auth attempt to prevent unnecessary API calls
-   - Detailed error handling with specific messages based on error codes
-   - Replace: true in navigation prevents back-button access to login after authentication
-
-2. User Experience:
-   - Disabled form controls during submission prevent duplicate requests
-   - Focus management returns users to the form after errors
-   - Proper loading indicators with text changes on the submit button
-
-3. Accessibility:
-   - ARIA attributes for screen reader support
-   - Live regions for dynamic error announcements
-   - Semantic HTML structure with proper form associations
-
-4. Performance:
-   - Memoized form handler prevents unnecessary recreations
-   - Early returns for validation reduce unnecessary processing
-   - Automatic redirection for authenticated users prevents unnecessary renders
-*/

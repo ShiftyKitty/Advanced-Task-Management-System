@@ -133,25 +133,3 @@
     justify-content: center;
   }
 }
-
-/* 
-Design/Coding Choices:
-
-1. Performance:
-   - Sticky header with targeted z-index to avoid layering issues
-   - Specific property transitions instead of "all" for better rendering
-   - Hardware-accelerated properties for smooth animations
-
-2. Visual Design:
-   - Consistent color scheme using primary blue (#007bff) for interactive elements
-   - Clear visual hierarchy with deliberate font weights
-
-3. Accessibility:
-   - Used rem units for better scaling with user font-size preferences
-   - Sufficient color contrast for text elements
-   - Appropriate hover states for interactive elements
-
-4. Responsive Design:
-   - Logical layout restructuring for mobile viewports
-   - Centered elements on small screens for better touch targets
-*/

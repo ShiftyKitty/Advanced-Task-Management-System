@@ -237,7 +237,7 @@ const TaskList = () => {
             data-testid="status-filter"
           >
             <option value="All">Status: All</option>
-            <option value="0">To Do</option>
+            <option value="0">Pending</option>
             <option value="1">In Progress</option>
             <option value="2">Completed</option>
             {(filters.showArchived || filters.filter === 'Archived') && (
@@ -258,7 +258,7 @@ const TaskList = () => {
             <option value="priority-desc">Sort: Priority (high to low)</option>
             <option value="title-asc">Sort: Title (A-Z)</option>
             <option value="title-desc">Sort: Title (Z-A)</option>
-            <option value="status-asc">Sort: Status (to do first)</option>
+            <option value="status-asc">Sort: Status (pending first)</option>
             <option value="created-desc">Sort: Recently Created</option>
             <option value="created-asc">Sort: Oldest Created</option>
           </select>
@@ -299,7 +299,7 @@ const TaskList = () => {
                   {task.priority === 0 ? 'LOW' : task.priority === 1 ? 'MEDIUM' : 'HIGH'}
                 </span>
                 <span className={`status status-${task.status}`}>
-                  {task.status === 0 ? 'TO DO' : 
+                  {task.status === 0 ? 'PENDING' : 
                    task.status === 1 ? 'IN PROGRESS' : 
                    task.status === 2 ? 'COMPLETED' : 'ARCHIVED'}
                 </span>
@@ -339,32 +339,3 @@ const TaskList = () => {
 };
 
 export default TaskList;
-
-/*
-Design/Coding Choices:
-
-1. Performance Optimization:
-   - Memoized expensive calculations and callbacks to prevent unnecessary rerenders
-   - Implemented lazy loading to handle large datasets efficiently
-   - Multi-tiered state management for filtered and visible tasks
-
-2. Filter Architecture:
-   - Combined filtering and sorting in a single effect for performance
-   - Preserved filter state during view transitions
-   - Optimized date calculations for date-based filtering
-
-3. User Experience:
-   - Clear empty state messaging based on context
-   - Progressive loading with scroll detection
-   - Intelligent display of archive options based on current view
-
-4. Accessibility:
-   - ARIA attributes for dynamic content and interactive elements
-   - Semantic structure with proper heading hierarchy
-   - Live regions for status updates
-
-5. Maintainability:
-   - Organized code by logical function
-   - Conditional rendering for contextual UI elements
-   - Test IDs for automated testing support
-*/

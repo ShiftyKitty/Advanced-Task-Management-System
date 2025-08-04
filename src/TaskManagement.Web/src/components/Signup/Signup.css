@@ -109,26 +109,3 @@
 .auth-links a:hover {
   text-decoration: underline;
 }
-
-/* 
-Design/Coding Choices:
-
-1. Accessibility:
-   - Focus states with clear visual indicators
-   - Sufficient color contrast for text and interactive elements
-   - Consistent feedback for user interactions
-
-2. Form Design:
-   - Single column layout optimized for completion speed
-   - Error messages with left border for improved visibility
-   - Visual feedback on button states (hover, active, disabled)
-
-3. Visual Consistency:
-   - Matches login form styling for cohesive product experience
-   - Material Design color palette for familiarity
-   - Subtle micro-interactions for improved engagement
-
-4. Performance:
-   - Hardware-accelerated transitions for smoother animations
-   - Specific property transitions rather than animating "all"
-*/

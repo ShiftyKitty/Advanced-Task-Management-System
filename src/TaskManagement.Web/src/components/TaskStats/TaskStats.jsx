@@ -55,7 +55,7 @@ const TaskStats = ({ tasks }) => {
     
     // Group tasks by status
     const byStatus = [
-      { name: 'To Do', value: 0, tasks: [] },
+      { name: 'Pending', value: 0, tasks: [] },
       { name: 'In Progress', value: 0, tasks: [] },
       { name: 'Completed', value: 0, tasks: [] },
       { name: 'Archived', value: 0, tasks: [] }
@@ -333,32 +333,3 @@ const TaskStats = ({ tasks }) => {
 };
 
 export default TaskStats;
-
-/*
-Design/Coding Choices:
-
-1. Performance Optimization:
-   - Extracted and memoized all expensive calculations into a single useMemo
-   - Implemented efficient filtering and sorting algorithms
-   - Memoized callback functions to prevent unnecessary rerenders
-
-2. Data Architecture:
-   - Centralized data transformation logic to reduce component complexity
-   - Clear separation between data processing and presentation
-   - Single source of truth for derived state
-
-3. Accessibility:
-   - Added aria attributes for dynamic content and progress indicators
-   - Improved screen reader support with proper roles
-   - Maintained semantic structure with appropriate heading levels
-
-4. State Management:
-   - Optimized state updates to prevent unnecessary re-renders
-   - Implemented virtual scrolling for performance with large datasets
-   - Used refs appropriately for DOM interactions
-
-5. Error Handling:
-   - Added defensive coding for date formatting
-   - Graceful fallbacks for empty data conditions
-   - Proper null checks for optional properties
-*/

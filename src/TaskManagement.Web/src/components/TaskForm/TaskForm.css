@@ -197,32 +197,3 @@ button:active:not(:disabled) {
     width: 100%;
   }
 }
-
-/* 
-Design/Coding Choices:
-
-1. Input Semantics:
-   - Color-coded form controls for visual relationship to data values
-   - Consistent feedback on interaction states (focus, hover, active)
-   - Clear visual distinction between different priority levels
-
-2. Layout Architecture:
-   - Responsive grid using flexbox for optimal form field arrangement
-   - Mobile-first approach with appropriate breakpoints
-   - Visual hierarchy emphasizing core task properties
-
-3. Interaction Design:
-   - Subtle micro-interactions (button press effect) for feedback
-   - Modal implementation with backdrop for focused decision making
-   - Consistent transition timings for predictable animations
-
-4. Maintainability:
-   - Grouped related selectors to reduce duplication
-   - Standardized color palette aligned with task status/priority
-   - Consistent naming pattern following component structure
-
-5. Accessibility:
-   - Sufficient color contrast for text readability
-   - Focus states for keyboard navigation
-   - Visual feedback for interactive elements
-*/

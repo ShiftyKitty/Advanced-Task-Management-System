@@ -150,7 +150,7 @@ const TaskForm = () => {
                 className={`status-select status-${task.status}`}
                 data-testid="task-status-select"
               >
-                <option value={0}>To Do</option>
+                <option value={0}>Pending</option>
                 <option value={1}>In Progress</option>
                 <option value={2}>Completed</option>
                 <option value={3}>Archived</option>
@@ -210,32 +210,3 @@ const TaskForm = () => {
 };
 
 export default TaskForm;
-
-/*
-Design/Coding Choices:
-
-1. Form Handling:
-   - Memoized default date to prevent recalculation on rerenders
-   - Used controlled form pattern for predictable state management
-   - Implemented specific validation with focus management
-
-2. User Experience:
-   - Confirmation modal for high-impact actions (setting high priority)
-   - Clear loading states with disabled controls
-   - Form validation with focused error messages
-
-3. Performance:
-   - Memoized event handlers with useCallback to prevent unnecessary rerenders
-   - Controlled form updates with targeted state changes
-   - Early returns for validation failures
-
-4. Accessibility:
-   - ARIA attributes for dynamic content and modal dialogs
-   - Error message announcements with live regions
-   - Form controls properly labeled and associated
-
-5. Maintainability:
-   - Clean separation between UI, state management, and event handling
-   - Consistent error handling pattern
-   - Test IDs for automated testing coverage
-*/

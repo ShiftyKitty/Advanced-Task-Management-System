@@ -90,27 +90,3 @@ export const authService = {
     return Boolean(user?.role === 'Admin');
   }
 };
-
-/*
-Design/Coding Choices:
-
-1. Authentication Flow:
-   - Consistent error handling with status codes
-   - Safely handles token storage and retrieval
-   - Enforces proper authentication state checking
-
-2. Security:
-   - Uses Boolean conversions for consistent truthiness checks
-   - Clears corrupt data to prevent authentication issues
-   - Only checks properties that actually matter for auth state
-
-3. Error Management:
-   - Enhanced error objects with HTTP status
-   - Consistent error handling pattern
-   - Safely handles JSON parsing failures
-
-4. Code Organization:
-   - Consistent method syntax across service
-   - Minimal comments focused on "why" not "what"
-   - Uses method shorthand for cleaner object definition
-*/

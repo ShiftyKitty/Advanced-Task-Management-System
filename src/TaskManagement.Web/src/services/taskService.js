@@ -88,23 +88,3 @@ export const taskService = {
     return true;
   }
 };
-
-/*
-Design/Coding Choices:
-
-1. Authentication:
-   - Protected against token parsing errors
-   - Simplified header retrieval with optional chaining
-
-2. API Consistency:
-   - Maintained consistent error handling across all methods
-   - Preserved API contract for backward compatibility
-
-3. Code Structure:
-   - Grouped related functionality for better readability
-   - Maintained clear method separation for maintainability
-
-4. Error Handling:
-   - Specific error messages for easier debugging
-   - Consistent error object structure throughout
-*/

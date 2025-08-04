@@ -9,7 +9,6 @@
   margin-bottom: 20px;
 }
 
-/* Charts section */
 .charts-container {
   display: flex;
   flex-wrap: wrap;
@@ -55,7 +54,6 @@
   margin-right: 8px;
 }
 
-/* Progress section */
 .progress-section {
   background-color: #fff;
   border-radius: 8px;
@@ -88,7 +86,6 @@
   transition: width 0.3s ease;
 }
 
-/* Deadlines section */
 .deadlines-section {
   background-color: #fff;
   border-radius: 8px;
@@ -223,7 +220,6 @@
   margin-top: 10px;
 }
 
-/* Priority badges */
 .priority {
   display: inline-block;
   padding: 3px 8px;
@@ -250,7 +246,6 @@
   color: #c62828;
 }
 
-/* Responsive layout */
 @media (max-width: 768px) {
   .charts-container {
     flex-direction: column;
@@ -260,32 +255,3 @@
     min-width: 100%;
   }
 }
-
-/* 
-Design/Coding Choices:
-
-1. Data Visualization:
-   - Clear visual hierarchy with card-based UI
-   - Consistent use of shadows and borders for depth
-   - Color-coded elements for quick pattern recognition
-
-2. Performance Considerations:
-   - Hardware-accelerated transitions (transform)
-   - Virtualized scrolling container for large datasets
-   - Custom scrollbars for better UX without performance cost
-
-3. Information Architecture:
-   - Grouped related data into distinct sections
-   - Maintained consistent spacing and alignment
-   - Used subtle hover states to indicate interactivity
-
-4. Accessibility:
-   - Sufficient color contrast for legibility
-   - Clear visual differentiation for urgent items
-   - Consistent font sizing with readable minimums
-
-5. Responsive Strategy:
-   - Single-column layout for smaller screens
-   - Maintained consistent padding at all viewport sizes
-   - Flexible width charts that adapt to container size
-*/

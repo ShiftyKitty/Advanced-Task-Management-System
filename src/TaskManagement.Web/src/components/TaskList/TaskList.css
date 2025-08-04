@@ -420,32 +420,3 @@
     flex-direction: column;
   }
 }
-
-/* 
-Design/Coding Choices:
-
-1. Visual Hierarchy:
-   - Card-based UI with consistent shadows and borders
-   - Color-coded status and priority badges for quick visual scanning
-   - Subtle visual cues for archived items (opacity, strikethrough)
-
-2. Component Architecture:
-   - Container-based layout for modular composition
-   - Clear separation between filtering UI and content display
-   - Consistent card patterns across statistics and task items
-
-3. User Experience:
-   - Truncated descriptions with ellipsis to maintain layout integrity
-   - Interactive states for all clickable elements
-   - Visual feedback for empty states and loading conditions
-
-4. Performance Considerations:
-   - Fixed height with scrolling container prevents DOM bloat with large datasets
-   - Optimized selectors with minimal nesting for better rendering
-   - Grouped similar styles to reduce redundancy
-
-5. Responsive Strategy:
-   - Stacked layouts on mobile for improved readability
-   - Adjustments to spacing and margins at breakpoints
-   - Flexible width containers with max-width constraints
-*/

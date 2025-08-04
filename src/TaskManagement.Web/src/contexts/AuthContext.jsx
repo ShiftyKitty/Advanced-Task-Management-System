@@ -92,27 +92,3 @@ export const useAuth = () => {
   
   return context;
 };
-
-/*
-Design/Coding Choices:
-
-1. Performance Optimization:
-   - Used useMemo to prevent unnecessary context rerenders
-   - Memoized handler functions with useCallback
-   - Added proper dependency arrays to hooks
-
-2. Error Handling:
-   - Added try/catch for initialization
-   - Preserved error propagation for login/register failures
-   - Added graceful degradation for auth state
-
-3. Type Safety:
-   - Added PropTypes for better component documentation
-   - Defined context shape with default values
-   - Used Boolean() for consistent type conversion
-
-4. React Best Practices:
-   - Separated context creation from provider implementation
-   - Added descriptive error messages for hooks usage
-   - Maintained clear separation between auth state and methods
-*/

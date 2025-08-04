@@ -114,26 +114,3 @@
   text-decoration: underline;
   color: #1565C0;
 }
-
-/* 
-Design/Coding Choices:
-
-1. Visual Design:
-   - Card-based interface with subtle depth cues for better visual hierarchy
-   - Material Design color palette for consistency and familiarity
-   - Left border accent for error states to improve visibility
-
-2. UX Considerations:
-   - Subtle micro-interactions (button depression, focus states)
-   - Clear visual feedback for all interactive states
-   - Custom focus styles that maintain accessibility while fitting the design
-
-3. Accessibility:
-   - High contrast text meeting WCAG AA standards
-   - Visible focus indicators for keyboard navigation
-   - Appropriately sized touch targets for mobile users
-
-4. Performance:
-   - Hardware-accelerated transitions (transform) for smoother animations
-   - Specific property transitions instead of "all" for better rendering
-*/

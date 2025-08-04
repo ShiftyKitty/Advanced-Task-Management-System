@@ -67,23 +67,3 @@ const Header = () => {
 };
 
 export default memo(Header);
-
-/*
-Design/Architecture Notes:
-
-1. Performance Optimization:
-   - Functions memoized with useCallback to prevent regeneration between renders
-   - Component memoized with memo to prevent unnecessary re-renders
-
-2. Accessibility:
-   - Semantic HTML with proper ARIA roles and labels
-   - Keyboard navigation support through native elements
-
-3. Error Handling:
-   - Silent failure on logout errors to avoid disrupting user experience
-   - Logs errors for monitoring but doesn't display to user
-
-4. Security Considerations:
-   - Role-based access control via isAdmin conditional rendering
-   - Authentication state managed through secure context
-*/

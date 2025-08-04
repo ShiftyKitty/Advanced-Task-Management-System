@@ -63,27 +63,3 @@ export const logService = {
     return true;
   }
 };
-
-/*
-Design/Coding Choices:
-
-1. API Structure:
-   - Consistent URL construction pattern for different filter types
-   - Clean separation between endpoint logic for better maintainability
-
-2. File Handling:
-   - Optimized CSV export with proper cleanup of object URLs
-   - Standardized filename format with ISO date
-
-3. Error Management:
-   - Preserved detailed error messages with status text
-   - Maintained consistent error handling pattern
-
-4. Authentication:
-   - Used same authentication pattern as task service
-   - Protected against token parsing errors with try/catch
-
-5. Code Organization:
-   - Simplified method signatures with default parameters
-   - Clear separation between URL construction and fetch operations
-*/

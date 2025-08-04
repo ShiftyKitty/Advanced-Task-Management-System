@@ -23,21 +23,3 @@ const ProtectedRoute = ({ requireAdmin = false }) => {
 };
 
 export default ProtectedRoute;
-
-/*
-Design/Coding Choices:
-
-1. Security:
-   - Two-tier authorization model (authenticated and admin roles)
-   - Explicit redirects for unauthorized access attempts
-   - Added replace flag to prevent navigation history issues
-
-2. UX Considerations:
-   - Loading state prevents flash of unauthorized content
-   - Hierarchical access control (admins see everything, users see permitted routes)
-
-3. Implementation:
-   - Clean conditional logic with early returns for better readability
-   - Leverages React Router's built-in navigation components
-   - Simple boolean prop interface for role-based protection
-*/
