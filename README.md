@@ -8,7 +8,10 @@ The Advanced Task Management System is a comprehensive task management solution 
 - [Project Structure](#project-structure)
 - [Commercial Approach](#commercial-approach)
 - [Application Setup](#application-setup)
+- [Application Access](#application-access)
 - [Design Decisions](#design-decisions)
+- [Technologies Used](#technologies-used)
+- [Data Storage](#data-storage)
 - [Features](#features)
 - [Future Work](#future-work)
 - [Testing](#testing)
@@ -16,15 +19,28 @@ The Advanced Task Management System is a comprehensive task management solution 
 - [License](#license)
 - [Acknowledgments](#acknowledgments)
 
+## Project Structure
+
+```
+TaskManagementSystem/
+├── src/                  # Source code for the project
+│   ├── TaskManagement.API/   # Backend API
+│   └── TaskManagement.Web/   # Frontend React application
+├── tests/                # Test files
+│   ├── TaskManagement.API.Tests/
+│   └── TaskManagement.Web.Tests/
+├── docs/                 # Documentation assets
+│   ├── images/           # Screenshots and diagrams
+│   └── pdfs/             # PDF documentation
+├── README.md             # This file
+└── TaskManagementSystem.sln
+```
+
 ## Commercial Approach
 
 Even though it's overkill to go into this depth for a smaller project, I always find it important to have structure and plan before coding. We code and build for commercial purposes. This template I developed helps keep things on track and commercially focused, concentrating on why users would use this rather than why I would build this.
 
-
-
-[📄 VIEW FULL COMMERCIAL ANALYSIS DOCUMENT 📄](/docs/pdfs/task_management_app.pdf)
-
-
+### 📄 [VIEW FULL COMMERCIAL ANALYSIS DOCUMENT](/docs/pdfs/task_management_app.pdf) 📄
 
 ![Commercial Analysis Template](/docs/images/task_management_app.jpg)
 
@@ -80,9 +96,11 @@ The development process followed a structured methodology to ensure commercial v
    ```bash
    cd src/TaskManagement.Web
    npm install
-   npm run dev
+   npm run start
    ```
    The frontend will be available at `http://localhost:3000`
+
+Both the API and frontend application must be running simultaneously for the application to function correctly.
 
 ## Application Access
 
@@ -98,25 +116,9 @@ The application comes with pre-configured user accounts for testing:
 ### User Roles
 
 - **Admin**: Access to all features, including the Logs/Audit Dashboard
-- **Test**: Access to task management features only
+- **User**: Access to task management features only
 
 ## Design Decisions
-
-## Technologies Used
-
-### Backend
-- .NET Core 8
-- ASP.NET Core Web API
-- Entity Framework Core (In-Memory Provider)
-- JWT Authentication
-- xUnit, Moq, FluentAssertions
-
-### Frontend
-- React 18
-- Vite
-- React Router
-- Recharts
-- Jest, React Testing Library
 
 ### What I Would Do Differently
 
@@ -127,6 +129,59 @@ The application comes with pre-configured user accounts for testing:
 ### Why These Technologies?
 
 I chose Vite+React and .NET Core as technologies I wanted to gain more experience with. While I had some familiarity with them, this project gave me a chance to deepen my understanding by building something practical. Even if the project wasn't perfect, the learning experience made it worthwhile.
+
+## Technologies Used
+
+### Backend
+- .NET Core 8
+- ASP.NET Core Web API
+- Entity Framework Core with SQLite
+- JWT Authentication
+- xUnit, Moq, FluentAssertions
+
+### Frontend
+- React 18
+- Vite
+- React Router
+- Recharts (for visualizations)
+- Jest, React Testing Library
+
+## Data Storage
+
+The application uses SQLite for data persistence, with Entity Framework Core as the ORM:
+
+```csharp
+// From Program.cs
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? 
+                     "Data Source=taskmanagement.db"));
+```
+
+### Database Details
+
+- **Database Type**: SQLite (file-based local database)
+- **Database Location**: The database file `taskmanagement.db` is created in the application's root directory
+- **ORM**: Entity Framework Core with Code-First approach
+- **Database Initialization**: The database is automatically created if it doesn't exist using `context.Database.EnsureCreated()`
+- **Seeded Data**: The database is pre-populated with:
+  - Sample tasks (high, medium, and low priority examples)
+  - Admin user account (username: "admin", password: "Admin123")
+
+> **Note on Challenge Requirements**: The challenge specified "Use only local storage for data persistence." While the implementation uses SQLite instead of browser localStorage, it still satisfies the core requirement of local persistence without requiring external database services. SQLite provides a more robust solution with proper data modeling while maintaining the simplicity of local storage.
+
+### Entity Framework Models
+
+The application includes three main data models:
+- `Task`: Stores task information (title, description, priority, due date, status)
+- `LogEntry`: Records for the middleware request logging
+- `User`: User accounts for authentication
+
+### Data Access
+
+The application uses the Repository pattern through Entity Framework, allowing for:
+- CRUD operations on tasks
+- Audit logging of all API requests
+- User authentication and authorization
 
 ## Features
 
