@@ -40,6 +40,8 @@ TaskManagementSystem/
 
 Even though it's overkill to go into this depth for a smaller project, I always find it important to have structure and plan before coding. We code and build for commercial purposes. This custom template I developed helps keep things on track and commercially focused, concentrating on why users would use this rather than why I would build this.
 
+See below this template I developed and used:
+
 ### 📄 [VIEW FULL COMMERCIAL ANALYSIS DOCUMENT](/docs/pdfs/task_management_app.pdf) 📄
 
 ![Commercial Analysis Template](/docs/images/task_management_app.jpg)
@@ -92,11 +94,14 @@ The development process followed a structured methodology to ensure commercial v
    ```
    The API will be available at `http://localhost:5271`
 
+  > **Note**: The database will be automatically created and initialized on first run. No manual migration commands are needed.
+
+
 3. Frontend Setup
    ```bash
    cd src/TaskManagement.Web
    npm install
-   npm run start
+   npm run dev
    ```
    The frontend will be available at `http://localhost:3000`
 
@@ -117,6 +122,9 @@ The application comes with pre-configured user accounts for testing:
 
 - **Admin**: Access to all features, including the Logs/Audit Dashboard
 - **User**: Access to task management features only
+
+> **Note**: I have added my development data to this project for ease of set up and testing. Feel free to use the Sign Up to create a new account to start fresh, make tasks and then login as an Admin to see the general users inputs.
+
 
 ## Design Decisions
 
@@ -168,6 +176,20 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
   - Admin user account (username: "admin", password: "Admin123")
 
 > **Note on Challenge Requirements**: The challenge specified "Use only local storage for data persistence." While the implementation uses SQLite instead of browser localStorage, it still satisfies the core requirement of local persistence without requiring external database services. SQLite provides a more robust solution with proper data modeling while maintaining the simplicity of local storage.
+
+### Database Approach
+
+This project uses Entity Framework Core with a Code-First approach and migrations for database management. Migrations were used throughout development to evolve the database schema while preserving data.
+
+#### Migration process used:
+
+1. Make changes to entity model classes
+2. Run `Add-Migration MigrationName` to create a migration file
+3. Run `Update-Database` to apply the migration to the database
+
+This approach allowed for incremental database schema updates during development without data loss. The database is automatically initialized when the application first runs, including applying any pending migrations and seeding initial data.
+
+For new users, no manual migration commands are needed as the database will be created with the current schema automatically when running the application for the first time (see taskmanagement.db).
 
 ### Entity Framework Models
 
